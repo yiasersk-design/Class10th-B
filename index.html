@@ -776,6 +776,167 @@
       clip: rect(0, 0, 0, 0);
       border: 0;
     }
+
+    /* Visual Poem Viewer Styles */
+    .poem-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .poem-modal-overlay.active {
+      display: flex;
+    }
+
+    .poem-modal-card {
+      background: var(--bg-card);
+      width: 100%;
+      max-width: 580px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border-color);
+      max-height: 94vh;
+    }
+
+    .poem-modal-header {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-subtle);
+    }
+
+    .poem-modal-header-info h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 0;
+    }
+
+    .poem-modal-header-info p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin: 2px 0 0;
+    }
+
+    .poem-modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .poem-scene-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background-color: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .poem-scene-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .poem-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      color: #ffffff;
+      border: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 5;
+      transition: background 0.2s ease;
+    }
+
+    .poem-nav-btn:hover {
+      background: rgba(0, 0, 0, 0.9);
+    }
+
+    .poem-nav-prev {
+      left: 10px;
+    }
+
+    .poem-nav-next {
+      right: 10px;
+    }
+
+    .poem-nav-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .poem-text-content {
+      padding: 16px;
+      overflow-y: auto;
+      max-height: 210px;
+      text-align: center;
+      background: var(--bg-card);
+    }
+
+    .poem-stanza-text {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--text-main);
+      font-weight: 500;
+      white-space: pre-line;
+      margin: 0;
+    }
+
+    .poem-modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-subtle);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .poem-action-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
   </style>
 </head>
 <body>
@@ -849,6 +1010,7 @@
             <button class="filter-btn" data-filter="audio">Audio</button>
             <button class="filter-btn" data-filter="cartoon">Cartoon</button>
             <button class="filter-btn" data-filter="realistic">Realistic</button>
+            <button class="filter-btn" data-filter="poem">Poem</button>
           </div>
         </div>
       </div>
@@ -877,6 +1039,43 @@
         <button id="resetFilterBtn" class="reset-btn">ফিল্টার রিসেট করুন</button>
       </div>
     </main>
+
+    <!-- Interactive Visual Poem Modal Viewer -->
+    <div id="poemModal" class="poem-modal-overlay" onclick="closePoemModal(event)">
+      <div class="poem-modal-card" onclick="event.stopPropagation()">
+        <div class="poem-modal-header">
+          <div class="poem-modal-header-info">
+            <h3 id="poemModalTitle">কবিতা</h3>
+            <p id="poemModalSubtitle"></p>
+          </div>
+          <button class="poem-modal-close-btn" onclick="closePoemModal()" title="বন্ধ করুন">✕</button>
+        </div>
+
+        <div class="poem-scene-wrapper" id="poemSwipeArea">
+          <img id="poemSceneImage" class="poem-scene-image" src="" alt="কবিতার দৃশ্য" />
+          <button class="poem-nav-btn poem-nav-prev" onclick="prevPoemSlide()" title="পূর্ববর্তী দৃশ্য" aria-label="Previous scene">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <button class="poem-nav-btn poem-nav-next" onclick="nextPoemSlide()" title="পরবর্তী দৃশ্য" aria-label="Next scene">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <div class="poem-text-content">
+          <p id="poemStanzaText" class="poem-stanza-text"></p>
+        </div>
+
+        <div class="poem-modal-footer">
+          <button class="poem-action-btn" onclick="prevPoemSlide()">← পূর্ববর্তী</button>
+          <span id="poemSlideCounter">দৃশ্য ১ / ১০</span>
+          <button class="poem-action-btn" onclick="nextPoemSlide()">পরবর্তী →</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Exam Preparation Footer -->
     <footer class="footer-note">
@@ -966,19 +1165,115 @@
           }
         ]
       },
-                {
-            number: 9,
-            title: "হারিয়ে যাওয়া কালি কলম",
-            resources: [
+      {
+        number: 7,
+        title: "অসুখী একজন",
+        author: "পাবলো নেরুদা",
+        subtitle: "তরজমা: নবারুণ ভট্টাচার্য",
+        resources: [
+          {
+            type: "poem",
+            label: "চিত্ররূপ ও পাঠ (Scene by Scene)",
+            action: "Read",
+            url: "",
+            scenes: [
               {
-                type: "video",
-                label: "Video",
-                action: "Watch",
-                url: "https://youtu.be/-gpWFyXdkA8"
+                img: "https://i.ibb.co/7JmSfqXv/186384.jpg",
+                text: "আমি তাকে ছেড়ে দিলাম অপেক্ষায়\nদাঁড় করিয়ে রেখে দরজায়\nআমি চলে গেলাম দূর... দূরে।"
+              },
+              {
+                img: "https://i.ibb.co/9HVNCZbC/186385.jpg",
+                text: "সে জানত না আমি আর কখনো ফিরে আসব না।"
+              },
+              {
+                img: "https://i.ibb.co/5WQ6Cdrn/186386.jpg",
+                text: "একটা কুকুর চলে গেল, হেঁটে গেল গির্জার এক নান\nএকটা সপ্তাহ আর একটা বছর কেটে গেল।"
+              },
+              {
+                img: "https://i.ibb.co/4ZHyhBSv/186387.jpg",
+                text: "বৃষ্টিতে ধুয়ে দিল আমার পায়ের দাগ\nঘাস জন্মালো রাস্তায়"
+              },
+              {
+                img: "https://i.ibb.co/35WqMLxk/186402.png",
+                text: "আর একটার পর একটা, পাথরের মতো\nপর পর পাথরের মতো, বছরগুলো নেমে এল তার মাথার ওপর।"
+              },
+              {
+                img: "https://i.ibb.co/Fbx4cjM4/838650533-1828931735221243-4022191683178151721-n.webp",
+                text: "তারপর যুদ্ধ এল\nরক্তের এক আগ্নেয়পাহাড়ের মতো।\nশিশু আর বাড়িরা খুন হলো।\nসেই মেয়েটির মৃত্যু হলো না।"
+              },
+              {
+                img: "https://i.ibb.co/zT5Cm4p6/186437.png",
+                text: "সমস্ত সমতলে ধরে গেল আগুন\nশান্ত হলুদ দেবতারা যারা হাজার বছর ধরে ডুবে ছিল ধ্যানে\nউল্টে পড়ল মন্দির থেকে টুকরো টুকরো হয়ে\nতারা আর স্বপ্ন দেখতে পারল না।"
+              },
+              {
+                img: "https://i.ibb.co/fGtgGx5f/833907385-2580249252422241-3424021629402863458-n.jpg",
+                text: "সেই মিষ্টি বাড়ি, সেই বারান্দা\nযেখানে আমি ঝুলন্ত বিছানায় ঘুমিয়েছিলাম,\nগোলাপি গাছ, ছড়ানো করতলের মতো পাতা\nচিমনি, প্রাচীন জলতরঙ্গ सब চূর্ণ হয়ে গেল, জ্বলে গেল আগুনে।"
+              },
+              {
+                img: "https://i.ibb.co/JFqFbXn2/186435.jpg",
+                text: "যেখানে ছিল শহর\nসেখানে ছড়িয়ে রইল কাঠকয়লা\nদোমড়ানো লোহা, মৃত পাথরের মূর্তির বীভৎস মাথা\nরক্তের একটা কালো দাগ।"
+              },
+              {
+                img: "https://i.ibb.co/YBg7tKzJ/186434.jpg",
+                text: "আর সেই মেয়েটি আমার অপেক্ষায়।"
               }
             ]
           }
-        ];
+        ]
+      },
+      {
+        number: 8,
+        title: "আয় আরো বেঁধে বেঁধে থাকি",
+        author: "শঙ্খ ঘোষ",
+        subtitle: "মূলগ্রন্থ : জলই পাষাণ হয়ে আছে",
+        resources: [
+          {
+            type: "poem",
+            label: "চিত্ররূপ ও পাঠ (Scene by Scene)",
+            action: "Read",
+            url: "",
+            scenes: [
+              {
+                img: "https://i.ibb.co/kg8WNnbs/186441.jpg",
+                text: "আমাদের ডান পাশে ধস\nআমাদের বাঁয়ে গিরিখাদ\nআমাদের মাথায় বোমারু\nপায়ে পায়ে হিমানীর বাঁধ"
+              },
+              {
+                img: "https://i.ibb.co/fYkB1x0L/186442.jpg",
+                text: "আমাদের পথ নেই কোনো\nআমাদের ঘর গেছে উড়ে\nআমাদের শিশুদের শব\nছড়ানো রয়েছে কাছে দূরে!"
+              },
+              {
+                img: "https://i.ibb.co/YB3C4TCF/186443.jpg",
+                text: "আমরাও তবে এইভাবে\nএ-মুহূর্তে মরে যাব না কি?\nআমাদের পথ নেই আর\nআয় আরো বেঁধে বেঁধে থাকি।"
+              },
+              {
+                img: "https://i.ibb.co/YTb5kFQt/186444.jpg",
+                text: "আমাদের ইতিহাস নেই\nঅথবা এমনই ইতিহাস\nআমাদের চোখমুখ ঢাকা\nআমরা ভিখারি বারোমাস"
+              },
+              {
+                img: "https://i.ibb.co/Kxz1KGGR/186450.png",
+                text: "পৃথিবী হয়তো বেঁচে আছে\nপৃথিবী হয়তো গেছে মরে\nআমাদের কথা কে-বা জানে\nআমরা ফিরেছি দোরে দোরে।"
+              },
+              {
+                img: "https://i.ibb.co/Q0RVwW0/186445.jpg",
+                text: "কিছুই কোথাও যদি নেই\nতবু তো কজন আছি বাকি\nআয় আরো হাতে হাত রেখে\nআয় আরো বেঁধে বেঁধে থাকি।"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        number: 9,
+        title: "হারিয়ে যাওয়া কালি কলম",
+        resources: [
+          {
+            type: "video",
+            label: "Video",
+            action: "Watch",
+            url: "https://youtu.be/-gpWFyXdkA8"
+          }
+        ]
+      }
+    ];
 
     // YouTube ID Extractor Helper
     function getYoutubeVideoId(url) {
@@ -1045,8 +1340,12 @@
       const resources = chapter.resources.filter(res => currentFilter === 'all' || res.type === currentFilter);
       if (resources.length === 0) return;
 
-      // If only one resource available, directly play it
+      // If only one resource available, directly play or view it
       if (resources.length === 1) {
+        if (resources[0].type === 'poem') {
+          openPoemModal(chapterIndex);
+          return;
+        }
         const singleVidId = getYoutubeVideoId(resources[0].url);
         const singleStartTime = getYoutubeStartTime(resources[0].url);
         const singleEndTime = getYoutubeEndTime(resources[0].url);
@@ -1061,19 +1360,29 @@
 
       let optionsListHtml = '';
       resources.forEach(res => {
-        const vidId = getYoutubeVideoId(res.url);
-        const startTime = getYoutubeStartTime(res.url);
-        const endTime = getYoutubeEndTime(res.url);
-        const iconSvg = res.action === 'Listen'
-          ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`
-          : `<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>`;
+        if (res.type === 'poem') {
+          const bookIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`;
+          optionsListHtml += `
+            <button class="thumb-picker-btn" onclick="event.stopPropagation(); openPoemModal(${chapterIndex});">
+              <span>${res.label} (চিত্রকবিতা)</span>
+              ${bookIcon}
+            </button>
+          `;
+        } else {
+          const vidId = getYoutubeVideoId(res.url);
+          const startTime = getYoutubeStartTime(res.url);
+          const endTime = getYoutubeEndTime(res.url);
+          const iconSvg = res.action === 'Listen'
+            ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`
+            : `<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>`;
 
-        optionsListHtml += `
-          <button class="thumb-picker-btn" onclick="event.stopPropagation(); playInlineVideo(this.closest('.resource-thumb-wrap'), '${vidId}', ${startTime}, ${endTime});">
-            <span>${res.label} (${res.action === 'Listen' ? 'অডিও' : 'ভিডিও'})</span>
-            ${iconSvg}
-          </button>
-        `;
+          optionsListHtml += `
+            <button class="thumb-picker-btn" onclick="event.stopPropagation(); playInlineVideo(this.closest('.resource-thumb-wrap'), '${vidId}', ${startTime}, ${endTime});">
+              <span>${res.label} (${res.action === 'Listen' ? 'অডিও' : 'ভিডিও'})</span>
+              ${iconSvg}
+            </button>
+          `;
+        }
       });
 
       container.innerHTML = `
@@ -1455,6 +1764,98 @@
       });
       renderApp();
     });
+
+    // Poem Modal State & Handlers
+    let currentPoemScenes = [];
+    let currentPoemSlideIndex = 0;
+
+    function openPoemModal(chapterIndex) {
+      const chapter = chaptersData[chapterIndex];
+      if (!chapter) return;
+      const poemResource = chapter.resources.find(r => r.type === 'poem' && r.scenes);
+      if (!poemResource) return;
+
+      currentPoemScenes = poemResource.scenes;
+      currentPoemSlideIndex = 0;
+
+      const authorText = chapter.author ? ` — ${chapter.author}` : '';
+      document.getElementById('poemModalTitle').textContent = `${chapter.title}${authorText}`;
+      const subtitleElem = document.getElementById('poemModalSubtitle');
+      if (subtitleElem) {
+        subtitleElem.textContent = chapter.subtitle || '';
+      }
+      updatePoemSlide();
+
+      const modal = document.getElementById('poemModal');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePoemModal(event) {
+      if (event && event.target && event.target.id !== 'poemModal' && !event.target.classList.contains('poem-modal-close-btn')) {
+        return;
+      }
+      const modal = document.getElementById('poemModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function updatePoemSlide() {
+      if (currentPoemScenes.length === 0) return;
+      const scene = currentPoemScenes[currentPoemSlideIndex];
+      const imgElem = document.getElementById('poemSceneImage');
+      const textElem = document.getElementById('poemStanzaText');
+      const counterElem = document.getElementById('poemSlideCounter');
+
+      imgElem.src = scene.img;
+      textElem.textContent = scene.text;
+      counterElem.textContent = `দৃশ্য ${toBengaliNumeral(currentPoemSlideIndex + 1)} / ${toBengaliNumeral(currentPoemScenes.length)}`;
+    }
+
+    function nextPoemSlide() {
+      if (currentPoemSlideIndex < currentPoemScenes.length - 1) {
+        currentPoemSlideIndex++;
+      } else {
+        currentPoemSlideIndex = 0; // Loop back to start
+      }
+      updatePoemSlide();
+    }
+
+    function prevPoemSlide() {
+      if (currentPoemSlideIndex > 0) {
+        currentPoemSlideIndex--;
+      } else {
+        currentPoemSlideIndex = currentPoemScenes.length - 1; // Loop to end
+      }
+      updatePoemSlide();
+    }
+
+    // Touch Swipe (Left / Right swipe support on mobile)
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    const swipeArea = document.getElementById('poemSwipeArea');
+    if (swipeArea) {
+      swipeArea.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      swipeArea.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handlePoemSwipe();
+      }, { passive: true });
+    }
+
+    function handlePoemSwipe() {
+      const swipeDistance = touchEndX - touchStartX;
+      if (Math.abs(swipeDistance) > 40) {
+        if (swipeDistance < 0) {
+          nextPoemSlide(); // Swiped left -> show next
+        } else {
+          prevPoemSlide(); // Swiped right -> show prev
+        }
+      }
+    }
 
     // Initial Render
     renderApp();

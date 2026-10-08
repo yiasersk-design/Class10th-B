@@ -1314,6 +1314,47 @@
       width: 24px;
       height: 24px;
     }
+
+    /* Video Dialogue Speaker Badge */
+    .speaker-indicator-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 25;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-left: 4px solid #ef4444;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      display: none;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-select: none;
+      animation: fadeInSpeaker 0.2s ease-out;
+    }
+
+    .speaker-indicator-badge.visible {
+      display: inline-flex;
+    }
+
+    @keyframes fadeInSpeaker {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 <body>
@@ -1474,7 +1515,158 @@
             action: "Watch",
             url: "https://youtu.be/49HwHr5A8fg",
             startTime: 25,
-            endTime: 1436
+            endTime: 1436,
+            dialogues: [
+              { start: 33, end: 49, speaker: "মেশোমশাই" },
+              { start: 50, end: 51, speaker: "ছোটোমামা" },
+              { start: 52, end: 54, speaker: "মেশোমশাই" },
+              { start: 57, end: 58, speaker: "দিদিমা" },
+              { start: 117, end: 144, speaker: "মেশোমশাই" },
+              { start: 233, end: 234, speaker: "মেশোমশাই" },
+              { start: 235, end: 239, speaker: "দিদিমা" },
+              { start: 240, end: 242, speaker: "মেশোমশাই" },
+              { start: 246, end: 249, speaker: "ছোটোমামা" },
+              { start: 250, end: 259, speaker: "মেশোমশাই" },
+              { start: 260, end: 265, speaker: "দিদিমা" },
+              { start: 265, end: 267, speaker: "দাদু" },
+              { start: 267, end: 268, speaker: "মেশোমশাই" },
+              { start: 269, end: 270, speaker: "দিদিমা" },
+              { start: 270, end: 272, speaker: "মেশোমশাই" },
+              { start: 273, end: 276, speaker: "ছোটোমাসি" },
+              { start: 277, end: 279, speaker: "দিদিমা" },
+              { start: 280, end: 284, speaker: "দিদিমা" },
+              { start: 285, end: 290, speaker: "দাদু" },
+              { start: 300, end: 302, speaker: "দিদিমা" },
+              { start: 302, end: 304, speaker: "মেশোমশাই" },
+              { start: 304, end: 305, speaker: "দিদিমা" },
+              { start: 305, end: 306, speaker: "মেশোমশাই" },
+              { start: 306, end: 306, speaker: "দিদিমা" },
+              { start: 306, end: 309, speaker: "মেশোমশাই" },
+              { start: 310, end: 313, speaker: "দিদিমা" },
+              { start: 313, end: 315, speaker: "মেশোমশাই" },
+              { start: 316, end: 317, speaker: "দিদিমা" },
+              { start: 324, end: 329, speaker: "ছোটোমাসি" },
+              { start: 330, end: 332, speaker: "তপন" },
+              { start: 349, end: 351, speaker: "দাদু" },
+              { start: 351, end: 354, speaker: "মেশোমশাই" },
+              { start: 375, end: 389, speaker: "মেশোমশাই" },
+              { start: 390, end: 393, speaker: "দাদু" },
+              { start: 394, end: 396, speaker: "মেশোমশাই" },
+              { start: 401, end: 403, speaker: "মেশোমশাই" },
+              { start: 407, end: 409, speaker: "ছোটোমাসি" },
+              { start: 410, end: 413, speaker: "মেশোমশাই" },
+              { start: 419, end: 423, speaker: "ছোটোমাসি" },
+              { start: 539, end: 547, speaker: "তপন" },
+              { start: 548, end: 551, speaker: "ছোটোমাসি" },
+              { start: 563, end: 564, speaker: "ছোটোমাসি" },
+              { start: 565, end: 566, speaker: "তপন" },
+              { start: 566, end: 567, speaker: "ছোটোমাসি" },
+              { start: 567, end: 569, speaker: "তপন" },
+              { start: 569, end: 570, speaker: "ছোটোমাসি" },
+              { start: 573, end: 579, speaker: "ছোটোমাসি" },
+              { start: 579, end: 581, speaker: "তপন" },
+              { start: 581, end: 586, speaker: "ছোটোমাসি" },
+              { start: 587, end: 590, speaker: "তপন" },
+              { start: 590, end: 591, speaker: "ছোটোমাসি" },
+              { start: 591, end: 595, speaker: "তপন" },
+              { start: 600, end: 601, speaker: "তপন" },
+              { start: 612, end: 614, speaker: "ছোটোমাসি" },
+              { start: 614, end: 615, speaker: "মেশোমশাই" },
+              { start: 615, end: 616, speaker: "ছোটোমাসি" },
+              { start: 616, end: 617, speaker: "মেশোমশাই" },
+              { start: 618, end: 620, speaker: "ছোটোমাসি" },
+              { start: 620, end: 621, speaker: "মেশোমশাই" },
+              { start: 621, end: 623, speaker: "ছোটোমাসি" },
+              { start: 625, end: 626, speaker: "মেশোমশাই" },
+              { start: 626, end: 629, speaker: "ছোটোমাসি" },
+              { start: 634, end: 635, speaker: "মেশোমশাই" },
+              { start: 636, end: 637, speaker: "ছোটোমাসি" },
+              { start: 655, end: 661, speaker: "মেশোমশাই" },
+              { start: 661, end: 663, speaker: "ছোটোমাসি" },
+              { start: 663, end: 664, speaker: "মেশোমশাই" },
+              { start: 675, end: 677, speaker: "মেশোমশাই" },
+              { start: 681, end: 689, speaker: "মেশোমশাই" },
+              { start: 689, end: 694, speaker: "তপন" },
+              { start: 695, end: 696, speaker: "মেশোমশাই" },
+              { start: 697, end: 702, speaker: "ছোটোমাসি" },
+              { start: 705, end: 718, speaker: "মেশোমশাই" },
+              { start: 720, end: 728, speaker: "মেশোমশাই" },
+              { start: 729, end: 731, speaker: "মেশোমশাই" },
+              { start: 759, end: 763, speaker: "দাদু" },
+              { start: 768, end: 769, speaker: "মেশোমশাই" },
+              { start: 770, end: 771, speaker: "দাদু" },
+              { start: 772, end: 774, speaker: "মেশোমশাই" },
+              { start: 774, end: 778, speaker: "দিদিমা" },
+              { start: 780, end: 783, speaker: "ছোটোমাসি" },
+              { start: 783, end: 784, speaker: "মেশোমশাই" },
+              { start: 784, end: 785, speaker: "দাদু" },
+              { start: 785, end: 786, speaker: "মেশোমশাই" },
+              { start: 789, end: 791, speaker: "দিদিমা" },
+              { start: 811, end: 816, speaker: "ছোটোমামা" },
+              { start: 820, end: 821, speaker: "দিদিমা" },
+              { start: 824, end: 825, speaker: "দিদিমা" },
+              { start: 825, end: 831, speaker: "ছোটোমামা" },
+              { start: 847, end: 857, speaker: "ছোটকাকা" },
+              { start: 858, end: 859, speaker: "তপনের বাবা" },
+              { start: 859, end: 861, speaker: "ছোটকাকা" },
+              { start: 861, end: 864, speaker: "তপনের বাবা" },
+              { start: 864, end: 865, speaker: "ছোটকাকা" },
+              { start: 865, end: 866, speaker: "তপনের বাবা" },
+              { start: 868, end: 871, speaker: "ছোটকাকা" },
+              { start: 871, end: 872, speaker: "মেজকাকু" },
+              { start: 874, end: 876, speaker: "ছোটকাকা" },
+              { start: 876, end: 877, speaker: "তপনের মা" },
+              { start: 877, end: 878, speaker: "ছোটকাকা" },
+              { start: 878, end: 879, speaker: "তপনের মা" },
+              { start: 879, end: 882, speaker: "ছোটকাকা" },
+              { start: 882, end: 884, speaker: "তপনের মা" },
+              { start: 960, end: 982, speaker: "তপনের বাবা" },
+              { start: 987, end: 1007, speaker: "ছোটকাকা" },
+              { start: 1024, end: 1026, speaker: "তপন" },
+              { start: 1027, end: 1030, speaker: "তপনের মা" },
+              { start: 1031, end: 1032, speaker: "তপন" },
+              { start: 1045, end: 1047, speaker: "তপনের মা" },
+              { start: 1087, end: 1091, speaker: "মেজকাকু" },
+              { start: 1091, end: 1095, speaker: "তপন" },
+              { start: 1110, end: 1120, speaker: "ছোটোমাসি" },
+              { start: 1121, end: 1124, speaker: "তপন" },
+              { start: 1132, end: 1134, speaker: "ছোটোমাসি" },
+              { start: 1135, end: 1137, speaker: "তপন" },
+              { start: 1137, end: 1139, speaker: "ছোটোমাসি" },
+              { start: 1139, end: 1140, speaker: "তপনের মা" },
+              { start: 1140, end: 1142, speaker: "তপন" },
+              { start: 1142, end: 1144, speaker: "তপনের মা" },
+              { start: 1144, end: 1146, speaker: "ছোটোমাসি, মেশোমশাই" },
+              { start: 1148, end: 1150, speaker: "তপনের মা" },
+              { start: 1150, end: 1151, speaker: "মেশোমশাই" },
+              { start: 1151, end: 1154, speaker: "তপনের মা" },
+              { start: 1154, end: 1155, speaker: "ছোটোমাসি" },
+              { start: 1156, end: 1158, speaker: "ছোটকাকা" },
+              { start: 1158, end: 1158, speaker: "ছোটোমাসি" },
+              { start: 1158, end: 1168, speaker: "ছোটকাকা" },
+              { start: 1169, end: 1175, speaker: "মেজকাকু" },
+              { start: 1176, end: 1181, speaker: "মেশোমশাই" },
+              { start: 1182, end: 1185, speaker: "ছোটোমাসি" },
+              { start: 1185, end: 1191, speaker: "মেজকাকু" },
+              { start: 1197, end: 1199, speaker: "তপনের বাবা" },
+              { start: 1200, end: 1201, speaker: "তপনের মা" },
+              { start: 1210, end: 1211, speaker: "তপনের মা" },
+              { start: 1221, end: 1228, speaker: "ছোটোমাসি" },
+              { start: 1229, end: 1238, speaker: "তপনের বাবা" },
+              { start: 1241, end: 1247, speaker: "তপনের মা" },
+              { start: 1254, end: 1257, speaker: "মেজকাকু" },
+              { start: 1262, end: 1269, speaker: "তপন" },
+              { start: 1270, end: 1273, speaker: "ছোটকাকা" },
+              { start: 1274, end: 1275, speaker: "তপনের বাবা" },
+              { start: 1275, end: 1277, speaker: "তপন" },
+              { start: 1289, end: 1290, speaker: "তপন" },
+              { start: 1295, end: 1306, speaker: "তপন" },
+              { start: 1307, end: 1312, speaker: "ছোটকাকা" },
+              { start: 1313, end: 1319, speaker: "তপন" },
+              { start: 1326, end: 1332, speaker: "তপনের বাবা" },
+              { start: 1334, end: 1342, speaker: "তপন" },
+              { start: 1354, end: 1361, speaker: "তপন" }
+            ]
           }
         ]
       },
@@ -1487,7 +1679,162 @@
             label: "Cartoon",
             action: "Watch",
             url: "https://youtu.be/hgg7H9Mmoxw",
-            startTime: 4
+            startTime: 4,
+            dialogues: [
+              { start: 18, end: 19, speaker: "সিরাজদ্দৌলা" },
+              { start: 19, end: 21, speaker: "ওয়াটস" },
+              { start: 21, end: 34, speaker: "সিরাজদ্দৌলা" },
+              { start: 35, end: 36, speaker: "ওয়াটস" },
+              { start: 37, end: 59, speaker: "সিরাজদ্দৌলা" },
+              { start: 60, end: 61, speaker: "ওয়াটস" },
+              { start: 61, end: 63, speaker: "সিরাজদ্দৌলা" },
+              { start: 63, end: 66, speaker: "ওয়াটস" },
+              { start: 66, end: 83, speaker: "সিরাজদ্দৌলা" },
+              { start: 84, end: 87, speaker: "ওয়াটস" },
+              { start: 88, end: 96, speaker: "সিরাজদ্দৌলা" },
+              { start: 97, end: 123, speaker: "ওয়াটস" },
+              { start: 124, end: 128, speaker: "সিরাজদ্দৌলা" },
+              { start: 129, end: 153, speaker: "মুন্সিজি" },
+              { start: 154, end: 156, speaker: "সিরাজদ্দৌলা" },
+              { start: 157, end: 161, speaker: "ওয়াটস" },
+              { start: 162, end: 177, speaker: "সিরাজদ্দৌলা" },
+              { start: 178, end: 180, speaker: "ওয়াটস" },
+              { start: 181, end: 183, speaker: "সিরাজদ্দৌলা" },
+              { start: 184, end: 199, speaker: "মুন্সিজি" },
+              { start: 200, end: 236, speaker: "সিরাজদ্দৌলা" },
+              { start: 237, end: 242, speaker: "ওয়াটস" },
+              { start: 243, end: 266, speaker: "সিরাজদ্দৌলা" },
+              { start: 267, end: 269, speaker: "ওয়াটস" },
+              { start: 272, end: 274, speaker: "রাজবল্লভ" },
+              { start: 274, end: 276, speaker: "সিরাজদ্দৌলা" },
+              { start: 277, end: 280, speaker: "মঁসিয়ে লা" },
+              { start: 280, end: 319, speaker: "সিরাজদ্দৌলা" },
+              { start: 320, end: 323, speaker: "মঁসিয়ে লা" },
+              { start: 324, end: 349, speaker: "সিরাজদ্দৌলা" },
+              { start: 354, end: 389, speaker: "মঁসিয়ে লা" },
+              { start: 390, end: 408, speaker: "সিরাজদ্দৌলা" },
+              { start: 409, end: 415, speaker: "মঁসিয়ে লা" },
+              { start: 431, end: 435, speaker: "সিরাজদ্দৌলা" },
+              { start: 436, end: 438, speaker: "রাজবল্লভ" },
+              { start: 439, end: 446, speaker: "সিরাজদ্দৌলা" },
+              { start: 447, end: 451, speaker: "রাজবল্লভ" },
+              { start: 454, end: 466, speaker: "সিরাজদ্দৌলা" },
+              { start: 467, end: 470, speaker: "জগৎশেঠ" },
+              { start: 471, end: 499, speaker: "সিরাজদ্দৌলা" },
+              { start: 500, end: 503, speaker: "জগৎশেঠ" },
+              { start: 503, end: 504, speaker: "সিরাজদ্দৌলা" },
+              { start: 505, end: 507, speaker: "জগৎশেঠ" },
+              { start: 508, end: 509, speaker: "সিরাজদ্দৌলা" },
+              { start: 509, end: 513, speaker: "জগৎশেঠ" },
+              { start: 514, end: 517, speaker: "সিরাজদ্দৌলা" },
+              { start: 518, end: 520, speaker: "জগৎশেঠ" },
+              { start: 521, end: 526, speaker: "সিরাজদ্দৌলা" },
+              { start: 527, end: 532, speaker: "মীরজাফর" },
+              { start: 533, end: 536, speaker: "সিরাজদ্দৌলা" },
+              { start: 537, end: 539, speaker: "রাজবল্লভ" },
+              { start: 540, end: 555, speaker: "সিরাজদ্দৌলা" },
+              { start: 556, end: 560, speaker: "রাজবল্লভ" },
+              { start: 561, end: 568, speaker: "সিরাজদ্দৌলা" },
+              { start: 569, end: 573, speaker: "রাজবল্লভ" },
+              { start: 574, end: 584, speaker: "সিরাজদ্দৌলা" },
+              { start: 589, end: 600, speaker: "মীরজাফর" },
+              { start: 601, end: 604, speaker: "মোহনলাল" },
+              { start: 605, end: 611, speaker: "মীরজাফর" },
+              { start: 612, end: 622, speaker: "মীরমদন" },
+              { start: 623, end: 625, speaker: "মীরজাফর" },
+              { start: 626, end: 641, speaker: "মোহনলাল" },
+              { start: 642, end: 657, speaker: "মীরমদন" },
+              { start: 658, end: 678, speaker: "মীরজাফর" },
+              { start: 679, end: 687, speaker: "সিরাজদ্দৌলা" },
+              { start: 688, end: 692, speaker: "মীরজাফর" },
+              { start: 693, end: 703, speaker: "সিরাজদ্দৌলা" },
+              { start: 704, end: 705, speaker: "মুন্সিজি" },
+              { start: 705, end: 708, speaker: "মীরজাফর" },
+              { start: 708, end: 719, speaker: "সিরাজদ্দৌলা" },
+              { start: 720, end: 721, speaker: "মীরজাফর" },
+              { start: 722, end: 723, speaker: "সিরাজদ্দৌলা" },
+              { start: 724, end: 726, speaker: "মীরজাফর" },
+              { start: 727, end: 740, speaker: "সিরাজদ্দৌলা" },
+              { start: 741, end: 744, speaker: "মীরজাফর" },
+              { start: 745, end: 754, speaker: "সিরাজদ্দৌলা" },
+              { start: 755, end: 759, speaker: "রাজবল্লভ" },
+              { start: 760, end: 765, speaker: "সিরাজদ্দৌলা" },
+              { start: 766, end: 769, speaker: "মীরজাফর" },
+              { start: 773, end: 793, speaker: "সিরাজদ্দৌলা" },
+              { start: 794, end: 796, speaker: "রাজবল্লভ" },
+              { start: 797, end: 799, speaker: "সিরাজদ্দৌলা" },
+              { start: 800, end: 810, speaker: "রাজবল্লভ" },
+              { start: 811, end: 827, speaker: "সিরাজদ্দৌলা" },
+              { start: 828, end: 832, speaker: "মীরজাফর" },
+              { start: 833, end: 846, speaker: "সিরাজদ্দৌলা" },
+              { start: 847, end: 850, speaker: "মীরজাফর" },
+              { start: 850, end: 977, speaker: "সিরাজদ্দৌলা" },
+              { start: 978, end: 980, speaker: "মীরজাফর" },
+              { start: 980, end: 984, speaker: "সিরাজদ্দৌলা" },
+              { start: 985, end: 992, speaker: "মীরজাফর" },
+              { start: 993, end: 998, speaker: "মীরমদন" },
+              { start: 999, end: 1002, speaker: "মোহনলাল" },
+              { start: 1003, end: 1005, speaker: "সিরাজদ্দৌলা" },
+              { start: 1006, end: 1010, speaker: "গোলাম হোসেন" },
+              { start: 1011, end: 1040, speaker: "সিরাজদ্দৌলা" },
+              { start: 1047, end: 1049, speaker: "সিরাজদ্দৌলা" },
+              { start: 1049, end: 1050, speaker: "গোলাম হোসেন" },
+              { start: 1050, end: 1053, speaker: "সিরাজদ্দৌলা" },
+              { start: 1054, end: 1056, speaker: "মুন্সিজি" },
+              { start: 1056, end: 1058, speaker: "সিরাজদ্দৌলা" },
+              { start: 1065, end: 1070, speaker: "ঘসেটি বেগম" },
+              { start: 1070, end: 1076, speaker: "সিরাজদ্দৌলা" },
+              { start: 1078, end: 1083, speaker: "ঘসেটি বেগম" },
+              { start: 1084, end: 1089, speaker: "সিরাজদ্দৌলা" },
+              { start: 1090, end: 1101, speaker: "ঘসেটি বেগম" },
+              { start: 1102, end: 1105, speaker: "সিরাজদ্দৌলা" },
+              { start: 1105, end: 1106, speaker: "ঘসেটি বেগম" },
+              { start: 1106, end: 1108, speaker: "সিরাজদ্দৌলা" },
+              { start: 1108, end: 1111, speaker: "ঘসেটি বেগম" },
+              { start: 1112, end: 1114, speaker: "সিরাজদ্দৌলা" },
+              { start: 1115, end: 1117, speaker: "ঘসেটি বেগম" },
+              { start: 1117, end: 1118, speaker: "সিরাজদ্দৌলা" },
+              { start: 1119, end: 1127, speaker: "ঘসেটি বেগম" },
+              { start: 1128, end: 1131, speaker: "সিরাজদ্দৌলা" },
+              { start: 1132, end: 1151, speaker: "ঘসেটি বেগম" },
+              { start: 1152, end: 1156, speaker: "সিরাজদ্দৌলা" },
+              { start: 1156, end: 1157, speaker: "ঘসেটি বেগম" },
+              { start: 1157, end: 1158, speaker: "সিরাজদ্দৌলা" },
+              { start: 1159, end: 1173, speaker: "ঘসেটি বেগম" },
+              { start: 1174, end: 1176, speaker: "সিরাজদ্দৌলা" },
+              { start: 1176, end: 1179, speaker: "ঘসেটি বেগম" },
+              { start: 1179, end: 1180, speaker: "সিরাজদ্দৌলা" },
+              { start: 1181, end: 1204, speaker: "ঘসেটি বেগম" },
+              { start: 1204, end: 1209, speaker: "লুৎফা" },
+              { start: 1209, end: 1211, speaker: "ঘসেটি বেগম" },
+              { start: 1211, end: 1214, speaker: "লুৎফা" },
+              { start: 1215, end: 1236, speaker: "ঘসেটি বেগম" },
+              { start: 1236, end: 1239, speaker: "লুৎফা" },
+              { start: 1239, end: 1243, speaker: "সিরাজদ্দৌলা" },
+              { start: 1244, end: 1249, speaker: "ঘসেটি বেগম" },
+              { start: 1249, end: 1253, speaker: "লুৎফা" },
+              { start: 1254, end: 1285, speaker: "ঘসেটি বেগম" },
+              { start: 1285, end: 1303, speaker: "সিরাজদ্দৌলা" },
+              { start: 1304, end: 1306, speaker: "লুৎফা" },
+              { start: 1306, end: 1321, speaker: "সিরাজদ্দৌলা" },
+              { start: 1322, end: 1328, speaker: "ঘসেটি বেগম" },
+              { start: 1328, end: 1350, speaker: "সিরাজদ্দৌলা" },
+              { start: 1350, end: 1356, speaker: "লুৎফা" },
+              { start: 1357, end: 1382, speaker: "ঘসেটি বেগম" },
+              { start: 1383, end: 1391, speaker: "সিরাজদ্দৌলা" },
+              { start: 1392, end: 1406, speaker: "লুৎফা" },
+              { start: 1406, end: 1423, speaker: "সিরাজদ্দৌলা" },
+              { start: 1424, end: 1427, speaker: "লুৎফা" },
+              { start: 1428, end: 1431, speaker: "সিরাজদ্দৌলা" },
+              { start: 1432, end: 1434, speaker: "লুৎফা" },
+              { start: 1434, end: 1439, speaker: "সিরাজদ্দৌলা" },
+              { start: 1439, end: 1440, speaker: "লুৎফা" },
+              { start: 1441, end: 1454, speaker: "সিরাজদ্দৌলা" },
+              { start: 1454, end: 1455, speaker: "লুৎফা" },
+              { start: 1456, end: 1463, speaker: "সিরাজদ্দৌলা" },
+              { start: 1464, end: 1465, speaker: "লুৎফা" },
+              { start: 1465, end: 1482, speaker: "সিরাজদ্দৌলা" }
+            ]
           }
         ]
       },
@@ -1518,7 +1865,126 @@
             url: "https://youtu.be/PjKSDkKX6qw?si=aQWmxyCTuqGzxxCK",
             startTime: 40,
             endTime: 1080,
-            skipRanges: [{ start: 232, end: 355 }]
+            skipRanges: [{ start: 232, end: 355 }],
+            dialogues: [
+              { start: 40, end: 56, speaker: "হাসান ভাই" },
+              { start: 59, end: 81, speaker: "হাসান ভাই" },
+              { start: 135, end: 137, speaker: "ঈশাব" },
+              { start: 137, end: 142, speaker: "হাসান ভাই" },
+              { start: 166, end: 170, speaker: "হাসান ভাই" },
+              { start: 171, end: 172, speaker: "ঈশাব" },
+              { start: 173, end: 184, speaker: "হাসান ভাই" },
+              { start: 185, end: 186, speaker: "ঈশাব" },
+              { start: 186, end: 198, speaker: "হাসান ভাই" },
+              { start: 246, end: 248, speaker: "ঈশাব" },
+              { start: 263, end: 265, speaker: "ঈশাব" },
+              { start: 273, end: 276, speaker: "ঈশাব" },
+              { start: 276, end: 277, speaker: "অমৃত" },
+              { start: 277, end: 278, speaker: "ঈশাব" },
+              { start: 278, end: 280, speaker: "অমৃত, ঈশাব" },
+              { start: 280, end: 281, speaker: "ঈশাব" },
+              { start: 281, end: 283, speaker: "অমৃত" },
+              { start: 301, end: 303, speaker: "অমৃত" },
+              { start: 303, end: 305, speaker: "ঈশাব" },
+              { start: 305, end: 307, speaker: "অমৃত" },
+              { start: 307, end: 310, speaker: "ঈশাব" },
+              { start: 312, end: 315, speaker: "অমৃত" },
+              { start: 319, end: 322, speaker: "ঈশাব" },
+              { start: 326, end: 328, speaker: "অমৃত" },
+              { start: 329, end: 332, speaker: "ঈশাব" },
+              { start: 334, end: 338, speaker: "ঈশাব" },
+              { start: 338, end: 340, speaker: "অমৃত" },
+              { start: 340, end: 343, speaker: "ঈশাব" },
+              { start: 343, end: 346, speaker: "অমৃত" },
+              { start: 346, end: 347, speaker: "অমৃত" },
+              { start: 347, end: 352, speaker: "ঈশাব" },
+              { start: 379, end: 380, speaker: "অমৃত" },
+              { start: 381, end: 383, speaker: "কালিয়া" },
+              { start: 386, end: 389, speaker: "অমৃত" },
+              { start: 394, end: 396, speaker: "বাহাল বৌদি" },
+              { start: 396, end: 399, speaker: "অমৃত" },
+              { start: 399, end: 404, speaker: "বাহাল বৌদি" },
+              { start: 405, end: 409, speaker: "অমৃত" },
+              { start: 409, end: 414, speaker: "বাহাল বৌদি" },
+              { start: 415, end: 422, speaker: "অমৃত" },
+              { start: 422, end: 425, speaker: "বাহাল বৌদি" },
+              { start: 432, end: 439, speaker: "বাহাল বৌদি" },
+              { start: 439, end: 440, speaker: "অমৃত" },
+              { start: 440, end: 445, speaker: "বাহাল বৌদি" },
+              { start: 447, end: 448, speaker: "বাহাল বৌদি" },
+              { start: 453, end: 458, speaker: "বাহাল বৌদি" },
+              { start: 459, end: 467, speaker: "অমৃতের বাবা" },
+              { start: 468, end: 475, speaker: "বাহাল বৌদি" },
+              { start: 475, end: 476, speaker: "অমৃতের বাবা" },
+              { start: 476, end: 479, speaker: "বাহাল বৌদি" },
+              { start: 479, end: 482, speaker: "অমৃতের বাবা" },
+              { start: 482, end: 491, speaker: "বাহাল বৌদি" },
+              { start: 492, end: 497, speaker: "অমৃতের বাবা" },
+              { start: 499, end: 513, speaker: "বাহাল বৌদি" },
+              { start: 516, end: 521, speaker: "বাহাল বৌদি" },
+              { start: 523, end: 524, speaker: "অমৃত" },
+              { start: 524, end: 543, speaker: "বাহাল বৌদি" },
+              { start: 543, end: 544, speaker: "অমৃত" },
+              { start: 544, end: 546, speaker: "বাহাল বৌদি" },
+              { start: 547, end: 554, speaker: "কালিয়া" },
+              { start: 554, end: 557, speaker: "বন্ধু ১" },
+              { start: 563, end: 573, speaker: "অমৃত" },
+              { start: 574, end: 591, speaker: "বন্ধুরা" },
+              { start: 596, end: 598, speaker: "অমৃত" },
+              { start: 598, end: 604, speaker: "বন্ধুরা" },
+              { start: 604, end: 608, speaker: "অমৃত" },
+              { start: 608, end: 619, speaker: "বন্ধুরা" },
+              { start: 619, end: 623, speaker: "ঈশাব" },
+              { start: 635, end: 636, speaker: "কালিয়া" },
+              { start: 641, end: 644, speaker: "কালিয়া" },
+              { start: 644, end: 647, speaker: "হাসান ভাই" },
+              { start: 655, end: 662, speaker: "অমৃত" },
+              { start: 663, end: 669, speaker: "ঈশাব" },
+              { start: 673, end: 676, speaker: "হাসান ভাই" },
+              { start: 684, end: 688, speaker: "অমৃত" },
+              { start: 691, end: 694, speaker: "ঈশাব" },
+              { start: 695, end: 700, speaker: "অমৃত" },
+              { start: 701, end: 703, speaker: "ঈশাব" },
+              { start: 709, end: 712, speaker: "ঈশাব" },
+              { start: 714, end: 720, speaker: "অমৃত" },
+              { start: 721, end: 723, speaker: "অমৃত" },
+              { start: 724, end: 731, speaker: "অমৃতের বাবা" },
+              { start: 731, end: 734, speaker: "বাহাল বৌদি" },
+              { start: 734, end: 735, speaker: "অমৃতের বাবা" },
+              { start: 736, end: 738, speaker: "বাহাল বৌদি" },
+              { start: 739, end: 742, speaker: "অমৃত" },
+              { start: 745, end: 746, speaker: "ঈশাব" },
+              { start: 748, end: 749, speaker: "অমৃত" },
+              { start: 754, end: 756, speaker: "ঈশাব" },
+              { start: 757, end: 774, speaker: "বাহাল বৌদি" },
+              { start: 790, end: 801, speaker: "অমৃত" },
+              { start: 802, end: 803, speaker: "ঈশাব" },
+              { start: 812, end: 814, speaker: "অমৃত" },
+              { start: 867, end: 869, speaker: "অমৃত" },
+              { start: 870, end: 871, speaker: "ঈশাব" },
+              { start: 888, end: 892, speaker: "বন্ধু ১" },
+              { start: 894, end: 895, speaker: "বন্ধু ২" },
+              { start: 896, end: 901, speaker: "বন্ধু ১" },
+              { start: 902, end: 904, speaker: "বন্ধুরা" },
+              { start: 906, end: 907, speaker: "অমৃত, ঈশাব" },
+              { start: 907, end: 916, speaker: "বন্ধুরা" },
+              { start: 931, end: 937, speaker: "হাসান ভাই" },
+              { start: 939, end: 942, speaker: "অমৃত" },
+              { start: 946, end: 955, speaker: "হাসান ভাই" },
+              { start: 959, end: 963, speaker: "হাসান ভাই" },
+              { start: 964, end: 967, speaker: "বাহাল বৌদি" },
+              { start: 968, end: 972, speaker: "হাসান ভাই" },
+              { start: 973, end: 978, speaker: "বাহাল বৌদি" },
+              { start: 979, end: 998, speaker: "হাসান ভাই" },
+              { start: 999, end: 1004, speaker: "অমৃত" },
+              { start: 1004, end: 1006, speaker: "ঈশাব" },
+              { start: 1019, end: 1020, speaker: "অমৃত" },
+              { start: 1021, end: 1033, speaker: "হাসান ভাই" },
+              { start: 1034, end: 1036, speaker: "বাহাল বৌদি" },
+              { start: 1038, end: 1046, speaker: "হাসান ভাই" },
+              { start: 1056, end: 1064, speaker: "গ্রাম প্রধান" },
+              { start: 1065, end: 1072, speaker: "গ্রামবাসীরা" }
+            ]
           }
         ]
       },
@@ -1532,7 +1998,128 @@
             action: "Watch",
             url: "https://youtu.be/p-__afAjWZ8",
             startTime: 70,
-            endTime: 1715
+            endTime: 1715,
+            dialogues: [
+              { start: 187, end: 190, speaker: "হরিদা" },
+              { start: 194, end: 196, speaker: "হরিদা" },
+              { start: 196, end: 197, speaker: "রতনদা" },
+              { start: 198, end: 200, speaker: "হরিদা" },
+              { start: 200, end: 201, speaker: "রতনদা" },
+              { start: 205, end: 207, speaker: "রতনদা" },
+              { start: 207, end: 209, speaker: "হরিদা" },
+              { start: 209, end: 212, speaker: "রতনদা" },
+              { start: 215, end: 217, speaker: "হরিদা" },
+              { start: 217, end: 222, speaker: "রতনদা" },
+              { start: 299, end: 306, speaker: "মাস্টারমশাই" },
+              { start: 311, end: 317, speaker: "মাস্টারমশাই" },
+              { start: 328, end: 335, speaker: "হরিদা" },
+              { start: 338, end: 346, speaker: "হরিদা" },
+              { start: 349, end: 356, speaker: "হরিদা" },
+              { start: 357, end: 360, speaker: "মাস্টারমশাই" },
+              { start: 361, end: 363, speaker: "ছাত্র" },
+              { start: 363, end: 364, speaker: "মাস্টারমশাই" },
+              { start: 364, end: 366, speaker: "ছাত্র" },
+              { start: 366, end: 372, speaker: "মাস্টারমশাই" },
+              { start: 386, end: 388, speaker: "মাস্টারমশাই" },
+              { start: 388, end: 393, speaker: "হরিদা" },
+              { start: 393, end: 398, speaker: "মাস্টারমশাই" },
+              { start: 398, end: 400, speaker: "হরিদা" },
+              { start: 400, end: 401, speaker: "মাস্টারমশাই" },
+              { start: 401, end: 403, speaker: "হরিদা" },
+              { start: 403, end: 414, speaker: "মাস্টারমশাই" },
+              { start: 414, end: 416, speaker: "হরিদা" },
+              { start: 416, end: 417, speaker: "মাস্টারমশাই" },
+              { start: 417, end: 419, speaker: "হরিদা" },
+              { start: 419, end: 425, speaker: "মাস্টারমশাই" },
+              { start: 498, end: 500, speaker: "হরিদা" },
+              { start: 500, end: 501, speaker: "দোকানদার" },
+              { start: 505, end: 507, speaker: "দোকানদার" },
+              { start: 524, end: 527, speaker: "দোকানদার" },
+              { start: 528, end: 530, speaker: "হরিদা" },
+              { start: 530, end: 534, speaker: "দোকানদার" },
+              { start: 536, end: 539, speaker: "হরিদা" },
+              { start: 539, end: 539, speaker: "দোকানদার" },
+              { start: 540, end: 541, speaker: "হরিদা" },
+              { start: 542, end: 545, speaker: "দোকানদার" },
+              { start: 558, end: 562, speaker: "দোকানদার" },
+              { start: 562, end: 563, speaker: "হরিদা" },
+              { start: 564, end: 566, speaker: "দোকানদার" },
+              { start: 567, end: 568, speaker: "হরিদা" },
+              { start: 569, end: 577, speaker: "দোকানদার" },
+              { start: 599, end: 602, speaker: "দোকানদার" },
+              { start: 606, end: 607, speaker: "দোকানদার" },
+              { start: 662, end: 669, speaker: "বাসচালক" },
+              { start: 687, end: 688, speaker: "মাস্টারমশাই" },
+              { start: 688, end: 690, speaker: "ভবতোষ" },
+              { start: 690, end: 693, speaker: "মাস্টারমশাই" },
+              { start: 693, end: 694, speaker: "দোকানদার" },
+              { start: 694, end: 696, speaker: "ভবতোষ" },
+              { start: 696, end: 706, speaker: "মাস্টারমশাই" },
+              { start: 707, end: 707, speaker: "ভবতোষ" },
+              { start: 708, end: 717, speaker: "মাস্টারমশাই" },
+              { start: 717, end: 718, speaker: "ভবতোষ" },
+              { start: 718, end: 720, speaker: "মাস্টারমশাই" },
+              { start: 721, end: 724, speaker: "ভবতোষ" },
+              { start: 725, end: 731, speaker: "দোকানদার" },
+              { start: 763, end: 770, speaker: "হরিদা" },
+              { start: 800, end: 804, speaker: "হরিদা" },
+              { start: 829, end: 833, speaker: "হরিদা" },
+              { start: 855, end: 857, speaker: "হরিদা" },
+              { start: 879, end: 881, speaker: "হরিদা" },
+              { start: 893, end: 896, speaker: "সাইকেল আরোহী" },
+              { start: 896, end: 898, speaker: "হরিদা" },
+              { start: 902, end: 904, speaker: "সাইকেল আরোহী" },
+              { start: 905, end: 920, speaker: "হরিদা" },
+              { start: 1093, end: 1095, speaker: "হরিদা" },
+              { start: 1101, end: 1108, speaker: "হরিদা" },
+              { start: 1128, end: 1130, speaker: "হরিদা" },
+              { start: 1132, end: 1135, speaker: "হরিদা" },
+              { start: 1137, end: 1137, speaker: "হরিদা" },
+              { start: 1138, end: 1144, speaker: "ভবতোষ" },
+              { start: 1159, end: 1162, speaker: "হরিদা" },
+              { start: 1202, end: 1205, speaker: "হরিদা" },
+              { start: 1206, end: 1211, speaker: "ভবতোষ" },
+              { start: 1211, end: 1215, speaker: "হরিদা" },
+              { start: 1216, end: 1217, speaker: "হরিদা" },
+              { start: 1218, end: 1223, speaker: "ভবতোষ" },
+              { start: 1225, end: 1241, speaker: "হরিদা" },
+              { start: 1254, end: 1267, speaker: "হরিদা" },
+              { start: 1268, end: 1272, speaker: "হরিদা" },
+              { start: 1273, end: 1276, speaker: "ভবতোষ" },
+              { start: 1277, end: 1281, speaker: "ভবতোষ" },
+              { start: 1339, end: 1343, speaker: "ভবতোষ" },
+              { start: 1343, end: 1344, speaker: "জগদীশবাবু" },
+              { start: 1352, end: 1353, speaker: "ভবতোষ" },
+              { start: 1354, end: 1355, speaker: "জগদীশবাবু" },
+              { start: 1370, end: 1371, speaker: "জগদীশবাবু" },
+              { start: 1373, end: 1375, speaker: "হরিদা" },
+              { start: 1375, end: 1378, speaker: "জগদীশবাবু" },
+              { start: 1379, end: 1393, speaker: "হরিদা" },
+              { start: 1396, end: 1400, speaker: "জগদীশবাবু" },
+              { start: 1401, end: 1407, speaker: "হরিদা" },
+              { start: 1408, end: 1410, speaker: "ভবতোষ" },
+              { start: 1415, end: 1418, speaker: "জগদীশবাবু" },
+              { start: 1419, end: 1422, speaker: "হরিদা" },
+              { start: 1460, end: 1470, speaker: "হরিদা" },
+              { start: 1471, end: 1477, speaker: "জগদীশবাবু" },
+              { start: 1478, end: 1496, speaker: "হরিদা" },
+              { start: 1498, end: 1500, speaker: "জগদীশবাবু" },
+              { start: 1500, end: 1508, speaker: "হরিদা" },
+              { start: 1509, end: 1513, speaker: "জগদীশবাবু" },
+              { start: 1514, end: 1529, speaker: "হরিদা" },
+              { start: 1530, end: 1533, speaker: "জগদীশবাবু" },
+              { start: 1554, end: 1558, speaker: "ভবতোষ" },
+              { start: 1559, end: 1575, speaker: "জগদীশবাবু" },
+              { start: 1576, end: 1582, speaker: "হরিদা" },
+              { start: 1582, end: 1584, speaker: "জগদীশবাবু" },
+              { start: 1584, end: 1590, speaker: "হরিদা" },
+              { start: 1640, end: 1651, speaker: "ভবতোষ" },
+              { start: 1652, end: 1655, speaker: "হরিদা" },
+              { start: 1657, end: 1664, speaker: "হরিদা" },
+              { start: 1664, end: 1667, speaker: "ভবতোষ" },
+              { start: 1667, end: 1674, speaker: "হরিদা" },
+              { start: 1679, end: 1688, speaker: "হরিদা" }
+            ]
           }
         ]
       },
@@ -2073,7 +2660,8 @@
           const singleEndTime = resources[0].endTime !== undefined ? resources[0].endTime : getYoutubeEndTime(resources[0].url);
           const singleSkips = resources[0].skipRanges || [];
           const isAudioOnly = resources[0].type === 'audio' || resources[0].action === 'Listen';
-          playInlineVideo(container, singleVidId, singleStartTime, singleEndTime, singleSkips, isAudioOnly);
+          const singleDialogues = resources[0].dialogues || [];
+          playInlineVideo(container, singleVidId, singleStartTime, singleEndTime, singleSkips, isAudioOnly, singleDialogues);
           return;
         }
 
@@ -2097,13 +2685,14 @@
             const startTime = res.startTime !== undefined ? res.startTime : getYoutubeStartTime(res.url);
             const endTime = res.endTime !== undefined ? res.endTime : getYoutubeEndTime(res.url);
             const skipsStr = JSON.stringify(res.skipRanges || []).replace(/"/g, '&quot;');
+            const dialoguesStr = JSON.stringify(res.dialogues || []).replace(/"/g, '&quot;');
             const isAudioOnly = res.type === 'audio' || res.action === 'Listen';
             const iconSvg = res.action === 'Listen'
               ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`
               : `<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>`;
 
             optionsListHtml += `
-              <button class="thumb-picker-btn" onclick="event.stopPropagation(); playInlineVideo(this.closest('.resource-thumb-wrap'), '${vidId}', ${startTime}, ${endTime}, ${skipsStr}, ${isAudioOnly});">
+              <button class="thumb-picker-btn" onclick="event.stopPropagation(); playInlineVideo(this.closest('.resource-thumb-wrap'), '${vidId}', ${startTime}, ${endTime}, ${skipsStr}, ${isAudioOnly}, ${dialoguesStr});">
                 <span>${res.label} (${res.action === 'Listen' ? 'অডিও' : 'ভিডিও'})</span>
                 ${iconSvg}
               </button>
@@ -2256,7 +2845,7 @@
     window.addEventListener('orientationchange', resizeVoiceWave, { passive: true });
 
     // Function to play video/audio instantly on click with dynamic timeline, seekbar, controls, and Voice Wave logic
-    function playInlineVideo(container, videoId, startTime = 0, endTime = 0, skipRanges = [], isAudio = false) {
+    function playInlineVideo(container, videoId, startTime = 0, endTime = 0, skipRanges = [], isAudio = false, dialogues = []) {
       if (!videoId) return;
 
       // If this video is already playing, do nothing
@@ -2310,7 +2899,13 @@
         resizeVoiceWave();
         initAudioScrubber();
       } else {
-        container.innerHTML = `<div id="${uniquePlayerId}" style="width:100%;height:100%;"></div>`;
+        container.innerHTML = `
+          <div id="${uniquePlayerId}" style="width:100%;height:100%;"></div>
+          <div id="speakerBadge" class="speaker-indicator-badge">
+            <span style="color:#f87171;font-size:0.75rem;font-weight:700;">চরিত্র:</span>
+            <span id="speakerBadgeText"></span>
+          </div>
+        `;
       }
 
       const playerVarsObj = {
@@ -2549,6 +3144,21 @@
           }
         }
 
+        // Update dialogue speaker badge overlay
+        if (Array.isArray(dialogues) && dialogues.length > 0) {
+          const badge = document.getElementById('speakerBadge');
+          const badgeText = document.getElementById('speakerBadgeText');
+          if (badge && badgeText) {
+            const currentDialogue = dialogues.find(d => currentTime >= d.start && currentTime <= d.end);
+            if (currentDialogue) {
+              badgeText.textContent = currentDialogue.speaker;
+              badge.classList.add('visible');
+            } else {
+              badge.classList.remove('visible');
+            }
+          }
+        }
+
         // Update in-app audio timeline UI if not actively scrubbing
         if (isAudio && !container._isScrubbing) {
           const curDuration = (endTime > 0 ? endTime : currentYTPlayer.getDuration()) || 0;
@@ -2590,7 +3200,8 @@
       }
 
       function launchAppropriateFullscreen() {
-        const targetElement = isAudio ? container : document.getElementById(uniquePlayerId);
+        const hasOverlay = isAudio || (Array.isArray(dialogues) && dialogues.length > 0);
+        const targetElement = hasOverlay ? container : document.getElementById(uniquePlayerId);
         if (targetElement && !document.fullscreenElement && !document.webkitFullscreenElement) {
           requestFullScreenMode(targetElement);
         }

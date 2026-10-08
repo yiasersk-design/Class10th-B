@@ -2121,15 +2121,21 @@
         resources: [
           {
             type: "audio",
-            label: "Audio — Mir",
+            label: "পাঠ্য বইয়ের অংশ",
             action: "Listen",
-            url: "https://youtu.be/8dIO-v1NB3M"
+            url: "https://youtu.be/8dIO-v1NB3M",
+            startTime: 3032,
+            endTime: 3687
           },
           {
-            type: "video",
-            label: "Video",
-            action: "Watch",
-            url: "https://youtu.be/icF7ksqtxZI"
+            type: "audio",
+            label: "সম্পূর্ণ কাহিনী",
+            action: "Listen",
+            url: "https://youtu.be/8dIO-v1NB3M",
+            skipRanges: [
+              { start: 41, end: 82 },
+              { start: 6976, end: 7001 }
+            ]
           }
         ]
       },

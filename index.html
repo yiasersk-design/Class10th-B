@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>Madhyamik Bengali — Exam Chapter Stories</title>
   <style>
     :root {
@@ -532,21 +532,42 @@
       display: block;
     }
 
-    /* Video perfectly centered on screen in Fullscreen mode */
-    .resource-thumb-wrap iframe:fullscreen,
-    .resource-thumb-wrap iframe:-webkit-full-screen {
-      width: 100vw !important;
-      height: 100vh !important;
-      max-width: 100vw !important;
-      max-height: 100vh !important;
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-      margin: auto !important;
-      padding: 0 !important;
-      border: 0 !important;
+    /* Video completely covers the mobile screen ONLY in Landscape mode */
+    :fullscreen,
+    ::backdrop {
+      background-color: #000000 !important;
+    }
+
+    @media (orientation: landscape) {
+      .resource-thumb-wrap iframe:fullscreen,
+      .resource-thumb-wrap iframe:-webkit-full-screen,
+      .resource-thumb-wrap iframe:-moz-full-screen,
+      .resource-thumb-wrap iframe:-ms-fullscreen {
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        max-width: 100vw !important;
+        max-height: 100dvh !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        inset: 0 !important;
+        transform: none !important;
+        margin: 0 !important;
+        border: 0 !important;
+        background: #000000 !important;
+        z-index: 2147483647 !important;
+      }
+    }
+
+    /* ভার্টিক্যাল (Portrait) অবস্থায় কোনো ফুলস্ক্রিন কালো পেজ থাকবে না */
+    @media (orientation: portrait) {
+      .resource-thumb-wrap iframe:fullscreen,
+      .resource-thumb-wrap iframe:-webkit-full-screen {
+        position: static !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
     }
 
     /* Clean Play Icon without background shadow box */
@@ -1823,6 +1844,17 @@
       }
 
       function stopAndClosePlayer() {
+        const isFS = document.fullscreenElement || 
+                     document.webkitFullscreenElement || 
+                     document.mozFullScreenElement || 
+                     document.msFullscreenElement;
+        if (isFS) {
+          const exitFS = document.exitFullscreen || 
+                         document.webkitExitFullscreen || 
+                         document.mozCancelFullScreen || 
+                         document.msExitFullscreen;
+          if (exitFS) exitFS.call(document).catch(() => {});
+        }
         if (container._timeCheckTimer) {
           clearInterval(container._timeCheckTimer);
           container._timeCheckTimer = null;
@@ -1837,8 +1869,10 @@
             container.setAttribute('onclick', container._savedOnClick);
           }
         }
+        container._stopPlayer = null;
         currentActiveContainer = null;
       }
+      container._stopPlayer = stopAndClosePlayer;
 
       function monitorTimeline() {
         if (!currentYTPlayer || typeof currentYTPlayer.getCurrentTime !== 'function') return;
@@ -1862,6 +1896,24 @@
         }
       }
 
+      function requestFullScreenMode(element) {
+        if (!element) return;
+        const requestFS = element.requestFullscreen || 
+                          element.webkitRequestFullscreen || 
+                          element.mozRequestFullScreen || 
+                          element.msRequestFullscreen;
+        if (requestFS) {
+          const promise = requestFS.call(element);
+          if (promise && typeof promise.then === 'function') {
+            promise.then(() => {
+              history.pushState({ isFullscreenVideo: true }, '');
+            }).catch(() => {});
+          } else {
+            history.pushState({ isFullscreenVideo: true }, '');
+          }
+        }
+      }
+
       function createPlayer() {
         currentYTPlayer = new YT.Player(uniquePlayerId, {
           width: '100%',
@@ -1874,9 +1926,17 @@
                 event.target.seekTo(startTime, true);
               }
               event.target.playVideo();
+              const iframeElement = document.getElementById(uniquePlayerId);
+              if (iframeElement) {
+                requestFullScreenMode(iframeElement);
+              }
             },
             onStateChange: function(event) {
               if (event.data === YT.PlayerState.PLAYING) {
+                const iframeElement = document.getElementById(uniquePlayerId);
+                if (iframeElement && !document.fullscreenElement && !document.webkitFullscreenElement) {
+                  requestFullScreenMode(iframeElement);
+                }
                 if (!container._timeCheckTimer) {
                   container._timeCheckTimer = setInterval(monitorTimeline, 100);
                 }
@@ -1902,7 +1962,47 @@
       }
     }
 
-    // Auto-lock to Landscape (Horizontal) when video enters Fullscreen
+    // সম্পূর্ণ প্লেয়ার বন্ধ করে সরাসরি মেইন পেজে ফিরিয়ে আনার মূল ফাংশন
+    function closeActiveVideoPlayer() {
+      const isFS = document.fullscreenElement || 
+                   document.webkitFullscreenElement || 
+                   document.mozFullScreenElement || 
+                   document.msFullscreenElement;
+      if (isFS) {
+        const exitFS = document.exitFullscreen || 
+                       document.webkitExitFullscreen || 
+                       document.mozCancelFullScreen || 
+                       document.msExitFullscreen;
+        if (exitFS) {
+          try { exitFS.call(document); } catch (e) {}
+        }
+      }
+
+      if (screen.orientation && screen.orientation.unlock) {
+        try { screen.orientation.unlock(); } catch (e) {}
+      }
+
+      if (currentActiveContainer) {
+        if (currentActiveContainer._timeCheckTimer) {
+          clearInterval(currentActiveContainer._timeCheckTimer);
+          currentActiveContainer._timeCheckTimer = null;
+        }
+        if (currentYTPlayer && typeof currentYTPlayer.destroy === 'function') {
+          try { currentYTPlayer.destroy(); } catch (e) {}
+          currentYTPlayer = null;
+        }
+        if (currentActiveContainer._originalThumbHTML) {
+          currentActiveContainer.innerHTML = currentActiveContainer._originalThumbHTML;
+          if (currentActiveContainer._savedOnClick) {
+            currentActiveContainer.setAttribute('onclick', currentActiveContainer._savedOnClick);
+          }
+        }
+        currentActiveContainer._stopPlayer = null;
+        currentActiveContainer = null;
+      }
+    }
+
+    // ফুলস্ক্রিন ও অরিয়েন্টেশন নিয়ন্ত্রণ
     function handleFullscreenOrientation() {
       const isFullscreen = document.fullscreenElement || 
                            document.webkitFullscreenElement || 
@@ -1910,27 +2010,45 @@
                            document.msFullscreenElement;
 
       if (isFullscreen) {
-        // Force screen orientation to Landscape
         if (screen.orientation && screen.orientation.lock) {
-          screen.orientation.lock('landscape').catch(() => {
-            // Fallback for browsers with strict orientation permission
-          });
+          screen.orientation.lock('landscape').catch(() => {});
         }
       } else {
-        // Unlock orientation back to normal when exiting Fullscreen
-        if (screen.orientation && screen.orientation.unlock) {
-          try {
-            screen.orientation.unlock();
-          } catch (e) {}
+        closeActiveVideoPlayer();
+        if (history.state && history.state.isFullscreenVideo) {
+          history.back();
         }
       }
     }
 
-    // Listen to Fullscreen changes across different mobile browsers
+    // স্ক্রিন ভার্টিক্যাল (Portrait) হওয়া মাত্রই সাথে সাথে ভিডিও বন্ধ করে মেইন পেজে যাওয়ার লিসেনার
+    function checkPortraitAndClose() {
+      if (!currentActiveContainer) return;
+      const isPortrait = window.matchMedia("(orientation: portrait)").matches || 
+                         (screen.orientation && screen.orientation.type && screen.orientation.type.startsWith('portrait'));
+      if (isPortrait) {
+        closeActiveVideoPlayer();
+      }
+    }
+
+    window.addEventListener('orientationchange', () => {
+      setTimeout(checkPortraitAndClose, 50);
+    });
+
+    if (screen.orientation && screen.orientation.addEventListener) {
+      screen.orientation.addEventListener('change', checkPortraitAndClose);
+    }
+
+    // ফুলস্ক্রিন পরিবর্তন লিসেনার
     document.addEventListener('fullscreenchange', handleFullscreenOrientation);
     document.addEventListener('webkitfullscreenchange', handleFullscreenOrientation);
     document.addEventListener('mozfullscreenchange', handleFullscreenOrientation);
     document.addEventListener('MSFullscreenChange', handleFullscreenOrientation);
+
+    // মোবাইলের ব্যাক বাটন / ব্যাক সোয়াইপ চাপলে সরাসরি মেইন পেজে ফিরে আসার হ্যান্ডলার
+    window.addEventListener('popstate', () => {
+      closeActiveVideoPlayer();
+    });
 
     // SVG Icon Generator Helper
     function getResourceIconSvg(type) {

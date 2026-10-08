@@ -1851,14 +1851,6 @@
             endTime: 245
           },
           {
-            type: "cartoon",
-            label: "Cartoon",
-            action: "Watch",
-            url: "https://youtu.be/_ZZskhAm7NQ",
-            startTime: 18,
-            endTime: 592
-          },
-          {
             type: "realistic",
             label: "Realistic",
             action: "Watch",
@@ -2149,7 +2141,9 @@
             type: "audio",
             label: "Audio",
             action: "Listen",
-            url: "https://youtu.be/z2aU0KrnA5U?start=90&end=580"
+            url: "https://youtu.be/z2aU0KrnA5U",
+            startTime: 98,
+            endTime: 588
           }
         ]
       },
@@ -2255,16 +2249,13 @@
         author: "শ্রীপান্থ",
         resources: [
           {
-            type: "video",
-            label: "Video",
-            action: "Watch",
-            url: "https://youtu.be/-gpWFyXdkA8"
-          },
-          {
             type: "audio",
             label: "Audio",
             action: "Listen",
-            url: "https://youtu.be/SO9elFiAIoE"
+            url: "https://youtu.be/SO9elFiAIoE",
+            startTime: 25,
+            endTime: 521,
+            skipRanges: [{ start: 51, end: 76 }]
           }
         ]
       },
@@ -2480,9 +2471,11 @@
         resources: [
           {
             type: "video",
-            label: "Video",
+            label: "Masterclass Video",
             action: "Watch",
-            url: "https://youtu.be/1mAZvlgclT4"
+            url: "https://youtu.be/618isqgVer0",
+            startTime: 86,
+            endTime: 480
           },
           {
             type: "poem",
@@ -2567,7 +2560,9 @@
             type: "audio",
             label: "Audio",
             action: "Listen",
-            url: "https://youtu.be/aodeHufniMY"
+            url: "https://youtu.be/aodeHufniMY",
+            startTime: 50,
+            endTime: 461
           }
         ]
       }
@@ -2720,17 +2715,20 @@
       }
     }
 
-    // Helper to format time into HH:MM:SS
+    // Helper to format time into MM:SS (or HH:MM:SS if hours exist)
     function formatMediaTime(seconds) {
       if (!seconds || isNaN(seconds) || seconds < 0) seconds = 0;
       const totalSec = Math.floor(seconds);
       const hrs = Math.floor(totalSec / 3600);
       const mins = Math.floor((totalSec % 3600) / 60);
       const secs = totalSec % 60;
-      const hStr = hrs < 10 ? '0' + hrs : String(hrs);
       const mStr = mins < 10 ? '0' + mins : String(mins);
       const sStr = secs < 10 ? '0' + secs : String(secs);
-      return `${hStr}:${mStr}:${sStr}`;
+      if (hrs > 0) {
+        const hStr = hrs < 10 ? '0' + hrs : String(hrs);
+        return `${hStr}:${mStr}:${sStr}`;
+      }
+      return `${mStr}:${sStr}`;
     }
 
     // Helper to generate Voice Wave animation HTML with In-App Timeline, Center Controls & Back Button
@@ -2826,8 +2824,8 @@
               <div class="audio-progress-thumb" id="audioProgressThumb"></div>
             </div>
             <div class="audio-time-row">
-              <span id="audioTimeCurrent">00:00:00</span>
-              <span id="audioTimeDuration">00:00:00</span>
+              <span id="audioTimeCurrent">00:00</span>
+              <span id="audioTimeDuration">00:00</span>
             </div>
           </div>
         </div>
@@ -3037,7 +3035,7 @@
           const seekTarget = (startTime || 0) + (ratio * segDuration);
 
           if (timeCur) {
-            timeCur.textContent = formatMediaTime(ratio * segDuration);
+            timeCur.textContent = formatMediaTime(seekTarget);
           }
           return seekTarget;
         }
@@ -3174,8 +3172,8 @@
 
           if (fill) fill.style.width = pct + '%';
           if (thumb) thumb.style.left = pct + '%';
-          if (timeCur) timeCur.textContent = formatMediaTime(curSegTime);
-          if (timeDur) timeDur.textContent = formatMediaTime(segDuration);
+          if (timeCur) timeCur.textContent = formatMediaTime(currentTime);
+          if (timeDur) timeDur.textContent = formatMediaTime(curDuration);
         }
       }
 

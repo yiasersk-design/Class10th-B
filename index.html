@@ -193,13 +193,14 @@
       height: 22px;
     }
 
-    /* Search & Filter Container */
+        /* Search & Filter Container */
     .control-panel {
-      margin-top: 10px;
+      margin-top: 0;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 6px;
     }
+
 
     .search-wrapper {
       position: relative;
@@ -255,13 +256,14 @@
       height: 16px;
     }
 
-    /* Horizontal Filter Pills - YouTube Chip Row */
+        /* Horizontal Filter Pills - YouTube Chip Row */
     .filters-scroll-wrapper {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-top: 4px;
+      margin-top: 0;
     }
+
 
     .explore-btn {
       width: 34px;
@@ -399,23 +401,53 @@
       margin-bottom: 10px;
     }
 
-    .thumb-card-play {
+                    .thumb-card-play {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: #ff0000;
+      background: #e60000;
       color: #ffffff;
-      box-shadow: 0 4px 8px rgba(255, 0, 0, 0.25);
+      border: 2px solid #ffffff;
+      box-shadow: 
+        0 0 0 2px #cc0000,
+        0 4px 0 #990000,
+        0 5px 0 #660000,
+        0 8px 12px rgba(0, 0, 0, 0.25);
+      transition: transform 0.1s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.1s cubic-bezier(0.2, 0, 0.2, 1);
     }
 
     .thumb-card-play svg {
-      width: 18px;
-      height: 18px;
+      width: 17px;
+      height: 17px;
       margin-left: 2px;
+      filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
     }
+
+    .resource-thumb-wrap:hover .thumb-card-play {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 0 0 2px #cc0000,
+        0 6px 0 #990000,
+        0 7px 0 #660000,
+        0 12px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .resource-thumb-wrap:active .thumb-card-play,
+    .thumb-card-play.is-pressed {
+      transform: translateY(5px) scale(0.96) !important;
+      box-shadow: 
+        0 0 0 2px #cc0000,
+        0 0 0 #990000,
+        0 1px 0 #660000,
+        0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    }
+
+
+
+
 
     /* Thumbnail Inside Options Overlay */
     .thumb-picker-overlay {
@@ -1095,7 +1127,9 @@
             type: "video",
             label: "Video",
             action: "Watch",
-            url: "https://youtu.be/49HwHr5A8fg"
+            url: "https://youtu.be/49HwHr5A8fg",
+            startTime: 25,
+            endTime: 1436
           }
         ]
       },
@@ -1107,7 +1141,8 @@
             type: "cartoon",
             label: "Cartoon",
             action: "Watch",
-            url: "https://youtu.be/hgg7H9Mmoxw"
+            url: "https://youtu.be/hgg7H9Mmoxw",
+            startTime: 4
           }
         ]
       },
@@ -1119,13 +1154,26 @@
             type: "video",
             label: "Tutopia",
             action: "Watch",
-            url: "https://youtu.be/TK2PQVJuK5o"
+            url: "https://youtu.be/TK2PQVJuK5o",
+            startTime: 70,
+            endTime: 245
           },
           {
             type: "cartoon",
             label: "Cartoon",
             action: "Watch",
-            url: "https://youtu.be/_ZZskhAm7NQ"
+            url: "https://youtu.be/_ZZskhAm7NQ",
+            startTime: 18,
+            endTime: 592
+          },
+          {
+            type: "realistic",
+            label: "Realistic",
+            action: "Watch",
+            url: "https://youtu.be/PjKSDkKX6qw?si=aQWmxyCTuqGzxxCK",
+            startTime: 40,
+            endTime: 1080,
+            skipRanges: [{ start: 232, end: 355 }]
           }
         ]
       },
@@ -1137,7 +1185,9 @@
             type: "realistic",
             label: "Realistic",
             action: "Watch",
-            url: "https://youtu.be/p-__afAjWZ8"
+            url: "https://youtu.be/p-__afAjWZ8",
+            startTime: 70,
+            endTime: 1715
           }
         ]
       },
@@ -1628,7 +1678,7 @@
 
     // Helper to open options list directly inside the thumbnail
     function openChapterOptions(container, chapterIndex) {
-      if (currentActiveContainer === container) return;
+      if (currentActiveContainer === container || container._isTriggering) return;
 
       const chapter = chaptersData[chapterIndex];
       if (!chapter) return;
@@ -1636,62 +1686,76 @@
       const resources = chapter.resources.filter(res => currentFilter === 'all' || res.type === currentFilter);
       if (resources.length === 0) return;
 
-      // If only one resource available, directly play or view it
-      if (resources.length === 1) {
-        if (resources[0].type === 'poem') {
-          openPoemModal(chapterIndex);
+      const playBtn = container.querySelector('.thumb-card-play');
+      if (playBtn) {
+        playBtn.classList.add('is-pressed');
+      }
+
+      container._isTriggering = true;
+
+      setTimeout(() => {
+        container._isTriggering = false;
+
+        // If only one resource available, directly play or view it
+        if (resources.length === 1) {
+          if (resources[0].type === 'poem') {
+            if (playBtn) playBtn.classList.remove('is-pressed');
+            openPoemModal(chapterIndex);
+            return;
+          }
+          const singleVidId = getYoutubeVideoId(resources[0].url);
+          const singleStartTime = resources[0].startTime !== undefined ? resources[0].startTime : getYoutubeStartTime(resources[0].url);
+          const singleEndTime = resources[0].endTime !== undefined ? resources[0].endTime : getYoutubeEndTime(resources[0].url);
+          const singleSkips = resources[0].skipRanges || [];
+          playInlineVideo(container, singleVidId, singleStartTime, singleEndTime, singleSkips);
           return;
         }
-        const singleVidId = getYoutubeVideoId(resources[0].url);
-        const singleStartTime = getYoutubeStartTime(resources[0].url);
-        const singleEndTime = getYoutubeEndTime(resources[0].url);
-        playInlineVideo(container, singleVidId, singleStartTime, singleEndTime);
-        return;
-      }
 
-      // Save initial cover thumbnail if not saved
-      if (!container._originalThumbHTML) {
-        container._originalThumbHTML = container.innerHTML;
-      }
-
-      let optionsListHtml = '';
-      resources.forEach(res => {
-        if (res.type === 'poem') {
-          const bookIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`;
-          optionsListHtml += `
-            <button class="thumb-picker-btn" onclick="event.stopPropagation(); openPoemModal(${chapterIndex});">
-              <span>${res.label} (চিত্রকবিতা)</span>
-              ${bookIcon}
-            </button>
-          `;
-        } else {
-          const vidId = getYoutubeVideoId(res.url);
-          const startTime = getYoutubeStartTime(res.url);
-          const endTime = getYoutubeEndTime(res.url);
-          const iconSvg = res.action === 'Listen'
-            ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`
-            : `<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>`;
-
-          optionsListHtml += `
-            <button class="thumb-picker-btn" onclick="event.stopPropagation(); playInlineVideo(this.closest('.resource-thumb-wrap'), '${vidId}', ${startTime}, ${endTime});">
-              <span>${res.label} (${res.action === 'Listen' ? 'অডিও' : 'ভিডিও'})</span>
-              ${iconSvg}
-            </button>
-          `;
+        // Save initial cover thumbnail if not saved
+        if (!container._originalThumbHTML) {
+          container._originalThumbHTML = container.innerHTML;
         }
-      });
 
-      container.innerHTML = `
-        <div class="thumb-picker-overlay" onclick="event.stopPropagation();">
-          <div class="thumb-picker-header">
-            <span class="thumb-picker-title">${chapter.title} — সংস্করণ নির্বাচন করুন</span>
-            <button class="thumb-picker-close" onclick="event.stopPropagation(); closeChapterOptions(this.closest('.resource-thumb-wrap'));" title="বন্ধ করুন">✕</button>
+        let optionsListHtml = '';
+        resources.forEach(res => {
+          if (res.type === 'poem') {
+            const bookIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`;
+            optionsListHtml += `
+              <button class="thumb-picker-btn" onclick="event.stopPropagation(); openPoemModal(${chapterIndex});">
+                <span>${res.label} (চিত্রকবিতা)</span>
+                ${bookIcon}
+              </button>
+            `;
+          } else {
+            const vidId = getYoutubeVideoId(res.url);
+            const startTime = res.startTime !== undefined ? res.startTime : getYoutubeStartTime(res.url);
+            const endTime = res.endTime !== undefined ? res.endTime : getYoutubeEndTime(res.url);
+            const skipsStr = JSON.stringify(res.skipRanges || []).replace(/"/g, '&quot;');
+            const iconSvg = res.action === 'Listen'
+              ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`
+              : `<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>`;
+
+            optionsListHtml += `
+              <button class="thumb-picker-btn" onclick="event.stopPropagation(); playInlineVideo(this.closest('.resource-thumb-wrap'), '${vidId}', ${startTime}, ${endTime}, ${skipsStr});">
+                <span>${res.label} (${res.action === 'Listen' ? 'অডিও' : 'ভিডিও'})</span>
+                ${iconSvg}
+              </button>
+            `;
+          }
+        });
+
+        container.innerHTML = `
+          <div class="thumb-picker-overlay" onclick="event.stopPropagation();">
+            <div class="thumb-picker-header">
+              <span class="thumb-picker-title">${chapter.title} — সংস্করণ নির্বাচন করুন</span>
+              <button class="thumb-picker-close" onclick="event.stopPropagation(); closeChapterOptions(this.closest('.resource-thumb-wrap'));" title="বন্ধ করুন">✕</button>
+            </div>
+            <div class="thumb-picker-list">
+              ${optionsListHtml}
+            </div>
           </div>
-          <div class="thumb-picker-list">
-            ${optionsListHtml}
-          </div>
-        </div>
-      `;
+        `;
+      }, 180);
     }
 
     function closeChapterOptions(container) {
@@ -1700,8 +1764,8 @@
       }
     }
 
-    // Function to play video instantly on a single click with minimal YouTube suggestions
-    function playInlineVideo(container, videoId, startTime = 0, endTime = 0) {
+    // Function to play video instantly on a single click with dynamic skip and timeline logic
+    function playInlineVideo(container, videoId, startTime = 0, endTime = 0, skipRanges = []) {
       if (!videoId) return;
 
       // If this video is already playing, do nothing
@@ -1776,6 +1840,28 @@
         currentActiveContainer = null;
       }
 
+      function monitorTimeline() {
+        if (!currentYTPlayer || typeof currentYTPlayer.getCurrentTime !== 'function') return;
+        const currentTime = currentYTPlayer.getCurrentTime();
+
+        // Check timeline end guard
+        if (endTime > 0 && currentTime >= endTime) {
+          stopAndClosePlayer();
+          return;
+        }
+
+        // Check and enforce skip ranges (prevents viewing or seeking into skipped intervals)
+        if (Array.isArray(skipRanges) && skipRanges.length > 0) {
+          for (let i = 0; i < skipRanges.length; i++) {
+            const range = skipRanges[i];
+            if (currentTime >= range.start && currentTime < range.end) {
+              currentYTPlayer.seekTo(range.end, true);
+              break;
+            }
+          }
+        }
+      }
+
       function createPlayer() {
         currentYTPlayer = new YT.Player(uniquePlayerId, {
           width: '100%',
@@ -1790,26 +1876,14 @@
               event.target.playVideo();
             },
             onStateChange: function(event) {
-              if (event.data === YT.PlayerState.PLAYING && endTime > 0) {
+              if (event.data === YT.PlayerState.PLAYING) {
                 if (!container._timeCheckTimer) {
-                  container._timeCheckTimer = setInterval(() => {
-                    if (currentYTPlayer && typeof currentYTPlayer.getCurrentTime === 'function') {
-                      const currentTime = currentYTPlayer.getCurrentTime();
-                      if (currentTime >= endTime) {
-                        stopAndClosePlayer();
-                      }
-                    }
-                  }, 500);
+                  container._timeCheckTimer = setInterval(monitorTimeline, 100);
                 }
               } else if (event.data === YT.PlayerState.ENDED) {
                 stopAndClosePlayer();
-              } else if (event.data === YT.PlayerState.PAUSED && endTime > 0) {
-                if (currentYTPlayer && typeof currentYTPlayer.getCurrentTime === 'function') {
-                  const currentTime = currentYTPlayer.getCurrentTime();
-                  if (currentTime >= endTime) {
-                    stopAndClosePlayer();
-                  }
-                }
+              } else if (event.data === YT.PlayerState.PAUSED) {
+                monitorTimeline();
               }
             }
           }

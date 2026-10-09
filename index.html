@@ -5014,6 +5014,10 @@
       }
 
       function stopAndClosePlayer() {
+        stopBackgroundAudioEngine();
+        if ('mediaSession' in navigator) {
+          navigator.mediaSession.playbackState = 'none';
+        }
         const isFS = document.fullscreenElement || 
                      document.webkitFullscreenElement || 
                      document.mozFullScreenElement || 
@@ -5138,6 +5142,14 @@
       }
 
             function createPlayer() {
+        // চ্যাপ্টারের নাম সনাক্ত করা
+        let chapterTitle = "Madhyamik Study";
+        const parentCard = container.closest('.yt-video-card');
+        if (parentCard) {
+          const tElem = parentCard.querySelector('.yt-video-title');
+          if (tElem) chapterTitle = tElem.textContent.trim();
+        }
+
         currentYTPlayer = new YT.Player(uniquePlayerId, {
           width: '100%',
           height: '100%',
@@ -5160,6 +5172,13 @@
               const pauseContent = `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
 
               if (event.data === YT.PlayerState.PLAYING) {
+                container._wasPlayingBeforeLock = true;
+                startBackgroundAudioEngine();
+                setupMediaSession(chapterTitle, isAudio ? 'অডিও সংস্করণ' : 'ভিডিও সংস্করণ');
+                if ('mediaSession' in navigator) {
+                  navigator.mediaSession.playbackState = 'playing';
+                }
+
                 if (isAudio) {
                   const audioWrap = container.querySelector('.audio-player-wrapper');
                   if (audioWrap) audioWrap.style.display = 'flex';
@@ -5172,11 +5191,28 @@
                   container._timeCheckTimer = setInterval(monitorTimeline, 100);
                 }
               } else if (event.data === YT.PlayerState.PAUSED) {
+                // ইউজার যদি স্ক্রিন অন থাকা অবস্থায় ম্যানুয়ালি পজ করে থাকেন
+                if (!document.hidden) {
+                  container._wasPlayingBeforeLock = false;
+                  stopBackgroundAudioEngine();
+                  if ('mediaSession' in navigator) {
+                    navigator.mediaSession.playbackState = 'paused';
+                  }
+                } else if (container._wasPlayingBeforeLock) {
+                  // স্ক্রিন বন্ধ থাকার কারণে যদি ব্রাউজার নিজে থেকে পজ করে, তবে তাৎক্ষণিক অটো-রিজিউম
+                  setTimeout(() => {
+                    if (currentYTPlayer && typeof currentYTPlayer.playVideo === 'function') {
+                      currentYTPlayer.playVideo();
+                    }
+                  }, 100);
+                }
+
                 if (playPauseBtn) playPauseBtn.innerHTML = playContent;
                 if (playerContainer) playerContainer.classList.remove('fullscreen-active');
 
                 monitorTimeline();
               } else if (event.data === YT.PlayerState.ENDED) {
+                container._wasPlayingBeforeLock = false;
                 stopAndClosePlayer();
               }
             }
@@ -5199,6 +5235,10 @@
 
     // সম্পূর্ণ প্লেয়ার বন্ধ করে সরাসরি মেইন পেজে ফিরিয়ে আনার মূল ফাংশন
     function closeActiveVideoPlayer() {
+      stopBackgroundAudioEngine();
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'none';
+      }
       const isFS = document.fullscreenElement || 
                    document.webkitFullscreenElement || 
                    document.mozFullScreenElement || 
@@ -5253,20 +5293,116 @@
           }
         }
       } else {
-        closeActiveVideoPlayer();
+        // ফোন লক হলে (document.hidden) অথবা ব্যাকগ্রাউন্ডে গেলে প্লেয়ার কখনই বন্ধ হবে না
+        if (document.hidden || (currentActiveContainer && currentActiveContainer._isScreenLocking)) {
+          return;
+        }
+
+        // ইউজার যদি ম্যানুয়ালি ফুলস্ক্রিন বন্ধ করে তবে শুধুমাত্র ভিডিওটি স্বাভাবিক আকারে ফিরে আসবে, বন্ধ হবে না
         if (history.state && history.state.isFullscreenVideo) {
           history.back();
         }
       }
     }
 
-    // স্ক্রিন ভার্টিক্যাল (Portrait) হওয়া মাত্রই সাথে সাথে ভিডিও বন্ধ করে মেইন পেজে যাওয়ার লিসেনার
+    // আধুনিক ব্যাকগ্রাউন্ড কিপ-অ্যালাইভ ইঞ্জিন (Silent Audio Track + Web Audio Context)
+    let bgAudioElement = null;
+    let bgAudioContext = null;
+
+    function startBackgroundAudioEngine() {
+      try {
+        // ১. একটি সাইলেন্ট অডিও ফাইল লুপে প্লে করা (ব্রাউজার ব্যাকগ্রাউন্ড প্রসেস যাতে স্লিপ না হয়)
+        if (!bgAudioElement) {
+          bgAudioElement = document.createElement('audio');
+          bgAudioElement.setAttribute('id', 'bgAudioKeeper');
+          bgAudioElement.setAttribute('loop', 'true');
+          bgAudioElement.setAttribute('playsinline', 'true');
+          bgAudioElement.setAttribute('preload', 'auto');
+          // ৪৪.১kHz নীরব অডিও ডাটা URI
+          bgAudioElement.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAP8A/w==";
+          document.body.appendChild(bgAudioElement);
+        }
+        bgAudioElement.play().catch(() => {});
+
+        // ২. ব্যাকআপ Web Audio Context
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          if (!bgAudioContext) {
+            bgAudioContext = new AudioContextClass();
+          }
+          if (bgAudioContext.state === 'suspended') {
+            bgAudioContext.resume().catch(() => {});
+          }
+        }
+      } catch (e) {
+        console.warn("Could not start background audio anchor:", e);
+      }
+    }
+
+    function stopBackgroundAudioEngine() {
+      try {
+        if (bgAudioElement) {
+          bgAudioElement.pause();
+          bgAudioElement.removeAttribute('src');
+          if (bgAudioElement.parentNode) {
+            bgAudioElement.parentNode.removeChild(bgAudioElement);
+          }
+          bgAudioElement = null;
+        }
+        if (bgAudioContext && bgAudioContext.state !== 'closed') {
+          bgAudioContext.close().catch(() => {});
+          bgAudioContext = null;
+        }
+      } catch (e) {}
+    }
+
+    // মিডিয়া সেশন এবং লক স্ক্রিন নিয়ন্ত্রণ সেটআপ
+    function setupMediaSession(title, artist) {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: title || 'Madhyamik Bengali',
+          artist: artist || 'Study Material',
+          album: 'Class 10 Bengali'
+        });
+
+        navigator.mediaSession.setActionHandler('play', () => {
+          if (currentYTPlayer && typeof currentYTPlayer.playVideo === 'function') {
+            currentYTPlayer.playVideo();
+          }
+        });
+
+        navigator.mediaSession.setActionHandler('pause', () => {
+          if (currentYTPlayer && typeof currentYTPlayer.pauseVideo === 'function') {
+            currentYTPlayer.pauseVideo();
+          }
+        });
+
+        navigator.mediaSession.setActionHandler('stop', () => {
+          closeActiveVideoPlayer();
+        });
+      }
+    }
+
+    // স্ক্রিন ভার্টিক্যাল (Portrait) হওয়া মাত্রই সাথে সাথে ভিডিও বন্ধ করার সংশোধিত লিসেনার
+    // (নোট: ব্যাকগ্রাউন্ডে যাওয়া বা স্ক্রিন লক হওয়ার সময় এটি যেন প্লেয়ারকে জোর করে বন্ধ না করে)
     function checkPortraitAndClose() {
       if (!currentActiveContainer || currentActiveContainer._isAudio) return;
+      if (document.hidden) return; // ফোন লক বা ব্যাকগ্রাউন্ডে থাকলে বন্ধ করা হবে না
+
+      const isFS = document.fullscreenElement || 
+                   document.webkitFullscreenElement || 
+                   document.mozFullScreenElement || 
+                   document.msFullscreenElement;
+
+      // শুধুমাত্র ইউজার ফুলস্ক্রিন চলাকালীন হাত দিয়ে ফোন পোর্ট্রেটে ফেরালে ফুলস্ক্রিন থেকে বের হবে
       const isPortrait = window.matchMedia("(orientation: portrait)").matches || 
                          (screen.orientation && screen.orientation.type && screen.orientation.type.startsWith('portrait'));
-      if (isPortrait) {
-        closeActiveVideoPlayer();
+      if (isPortrait && isFS) {
+        const exitFS = document.exitFullscreen || 
+                       document.webkitExitFullscreen || 
+                       document.mozCancelFullScreen || 
+                       document.msExitFullscreen;
+        if (exitFS) exitFS.call(document).catch(() => {});
       }
     }
 
@@ -5277,6 +5413,41 @@
     if (screen.orientation && screen.orientation.addEventListener) {
       screen.orientation.addEventListener('change', checkPortraitAndClose);
     }
+
+    // পেজ ব্যাকগ্রাউন্ডে বা স্ক্রিন লক হলে প্লেয়ার সচল রাখা নিশ্চিত করার হ্যান্ডলার
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        // স্ক্রিন লক হয়েছে বা অ্যাপ মিনিমাইজ হয়েছে
+        if (currentActiveContainer) {
+          currentActiveContainer._isScreenLocking = true;
+          setTimeout(() => {
+            if (currentActiveContainer) currentActiveContainer._isScreenLocking = false;
+          }, 1000);
+        }
+
+        if (currentActiveContainer && currentActiveContainer._wasPlayingBeforeLock) {
+          startBackgroundAudioEngine();
+          // ইউটিউবের ব্যাকগ্রাউন্ডে অটো-পজ হওয়া ঠেকাতে মাল্টিপল ট্রাই সাইকেল
+          [80, 200, 500, 1000].forEach(delay => {
+            setTimeout(() => {
+              if (currentYTPlayer && typeof currentYTPlayer.playVideo === 'function') {
+                currentYTPlayer.playVideo();
+              }
+            }, delay);
+          });
+        }
+      } else {
+        // ইউজার স্ক্রিন আনলক করে ফিরে এলে
+        if (currentActiveContainer) {
+          currentActiveContainer._isScreenLocking = false;
+          if (currentYTPlayer && typeof currentYTPlayer.getPlayerState === 'function') {
+            if (currentActiveContainer._wasPlayingBeforeLock) {
+              currentYTPlayer.playVideo();
+            }
+          }
+        }
+      }
+    });
 
     // ফুলস্ক্রিন পরিবর্তন লিসেনার
     document.addEventListener('fullscreenchange', handleFullscreenOrientation);

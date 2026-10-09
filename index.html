@@ -910,6 +910,22 @@
       pointer-events: none;
     }
 
+    .poem-end-frame {
+      width: 100%;
+      height: 100%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, #1e293b 0%, #000000 100%);
+      color: #ffffff;
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      user-select: none;
+      text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+    }
+
     .poem-nav-btn {
       position: absolute;
       top: 50%;
@@ -1678,6 +1694,7 @@
 
         <div class="poem-scene-wrapper" id="poemSwipeArea">
           <img id="poemSceneImage" class="poem-scene-image" src="" alt="কবিতার দৃশ্য" />
+          <div id="poemEndFrame" class="poem-end-frame">The End</div>
           <button class="poem-nav-btn poem-nav-prev" onclick="prevPoemSlide()" title="পূর্ববর্তী দৃশ্য" aria-label="Previous scene">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="15 18 9 12 15 6"></polyline>
@@ -2046,7 +2063,7 @@
         resources: [
           {
             type: "video",
-            label: "Tutopia",
+            label: "গল্পের বিষয়বস্তু",
             action: "Watch",
             url: "https://youtu.be/TK2PQVJuK5o",
             startTime: 70,
@@ -3755,7 +3772,7 @@
                 text: "পিতার পুণ্যের ফলে মোহর ভাগ্যের বলে\nবাহুরক কন্যার জীবন।\nচিকিৎসিমু প্রাণপণ কৃপা কর নিরঞ্জন\nদুখিনীরে করিয়া স্মরণ।"
               },
               {
-                img: "https://i.ibb.co/YFt6zsyN/186553.jpg",
+                img: "https://i.ibb.co/7dxYsXhc/1791534905395.png",
                 text: "সখী সবে আজ্ঞা দিল উদ্যানের মাঝে নিল\nপঞ্চজনে বসনে ঢাকিয়া।"
               },
               {
@@ -3782,7 +3799,7 @@
         resources: [
           {
             type: "video",
-            label: "Masterclass Video",
+            label: "বিস্তারিত আলোচনা",
             action: "Watch",
             url: "https://youtu.be/618isqgVer0",
             startTime: 86,
@@ -3839,7 +3856,7 @@
                 text: "রত্নাকর রত্নোত্তমা ইন্দিরা সুন্দরী\nউত্তরিলা;— “হায়! পুত্র, মায়াবী মানব\nসীতাপতি; তব শরে মরিয়া বাঁচিল।\nযাও তুমি ত্বরা করি; রক্ষ রক্ষঃকুল-\nমান, এ কালসমরে, রক্ষঃ-চূড়ামণি!”"
               },
               {
-                img: "https://i.ibb.co/0pF8CQt1/186662.jpg",
+                img: "https://i.ibb.co/HTdwShpX/1791532010004.png",
                 text: "ছিঁড়িলা কুসুমদাম রোষে মহাবলী\nমেঘনাদ; ফেলাইলা কনক-বলয়\nদূরে; পদ-তলে পড়ি শোভিল কুণ্ডল,\nযথা অশোকের ফুল অশোকের তলে\nআভাময়! “ধিক্ মোরে” কহিলা গম্ভীরে\nকুমার, “হা ধিক্ মোরে! বৈরিদল বেড়ে\nস্বর্ণলঙ্কা, হেথা আমি বামাদল মাঝে?\nএই কি সাজে আমারে, দশাননাত্মজ\nআমি ইন্দ্রজিৎ, আন রথ ত্বরা করি;\nঘুচাব এ অপবাদ, বধি রিপুকুলে।”"
               },
               {
@@ -5703,7 +5720,13 @@
       const poemResource = chapter.resources.find(r => r.type === 'poem' && r.scenes);
       if (!poemResource) return;
 
-      currentPoemScenes = poemResource.scenes;
+      currentPoemScenes = [
+        ...poemResource.scenes,
+        {
+          isEnd: true,
+          text: "সমাপ্ত"
+        }
+      ];
       currentPoemSlideIndex = 0;
 
       const authorText = chapter.author ? ` — ${chapter.author}` : '';
@@ -5732,12 +5755,25 @@
       if (currentPoemScenes.length === 0) return;
       const scene = currentPoemScenes[currentPoemSlideIndex];
       const imgElem = document.getElementById('poemSceneImage');
+      const endFrameElem = document.getElementById('poemEndFrame');
       const textElem = document.getElementById('poemStanzaText');
       const counterElem = document.getElementById('poemSlideCounter');
 
-      imgElem.src = scene.img;
-      textElem.textContent = scene.text;
-      counterElem.textContent = `দৃশ্য ${toBengaliNumeral(currentPoemSlideIndex + 1)} / ${toBengaliNumeral(currentPoemScenes.length)}`;
+      if (scene.isEnd) {
+        if (imgElem) imgElem.style.display = 'none';
+        if (endFrameElem) endFrameElem.style.display = 'flex';
+        textElem.textContent = scene.text;
+        counterElem.textContent = 'সমাপ্ত';
+      } else {
+        if (imgElem) {
+          imgElem.style.display = 'block';
+          imgElem.src = scene.img;
+        }
+        if (endFrameElem) endFrameElem.style.display = 'none';
+        textElem.textContent = scene.text;
+        const totalContentScenes = currentPoemScenes.length - 1;
+        counterElem.textContent = `দৃশ্য ${toBengaliNumeral(currentPoemSlideIndex + 1)} / ${toBengaliNumeral(totalContentScenes)}`;
+      }
     }
 
     function nextPoemSlide() {

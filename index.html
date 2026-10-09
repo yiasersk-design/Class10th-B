@@ -3034,15 +3034,18 @@
       // Remove click handler from container while playing
       container.removeAttribute('onclick');
 
-      // Create an internal mount element for YouTube Player
+            // Create an internal mount element for YouTube Player
       const uniquePlayerId = 'yt_player_' + Math.random().toString(36).substring(2, 9);
       if (isAudio) {
         container.innerHTML = `
           <div id="${uniquePlayerId}" class="audio-hidden-mount"></div>
           ${getAudioPlayerHTML()}
         `;
+        const audioWrap = container.querySelector('.audio-player-wrapper');
+        if (audioWrap) audioWrap.style.display = 'none';
         initAudioScrubber();
       } else {
+
         container.innerHTML = `
           <div id="${uniquePlayerId}" style="width:100%;height:100%;"></div>
           <div id="speakerBadge" class="speaker-indicator-badge">
@@ -3308,7 +3311,7 @@
         }
       }
 
-      function createPlayer() {
+            function createPlayer() {
         currentYTPlayer = new YT.Player(uniquePlayerId, {
           width: '100%',
           height: '100%',
@@ -3320,7 +3323,9 @@
                 event.target.seekTo(startTime, true);
               }
               event.target.playVideo();
-              launchAppropriateFullscreen();
+              if (!isAudio) {
+                launchAppropriateFullscreen();
+              }
             },
             onStateChange: function(event) {
               const playPauseBtn = document.getElementById('playPauseBtn');
@@ -3329,6 +3334,10 @@
               const pauseContent = `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
 
               if (event.data === YT.PlayerState.PLAYING) {
+                if (isAudio) {
+                  const audioWrap = container.querySelector('.audio-player-wrapper');
+                  if (audioWrap) audioWrap.style.display = 'flex';
+                }
                 if (playPauseBtn) playPauseBtn.innerHTML = pauseContent;
                 if (playerContainer) playerContainer.classList.add('fullscreen-active');
 
@@ -3348,6 +3357,7 @@
           }
         });
       }
+
 
       if (window.YT && window.YT.Player) {
         createPlayer();

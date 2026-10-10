@@ -1269,7 +1269,74 @@
       transform: scale(1);
       opacity: 1;
       width: 50px; 
-      overflow: hidden; 
+      overflow: visible;
+      position: relative;
+    }
+
+    /* ১০ সেকেন্ড স্কিপের ভিজ্যুয়াল পপআপ টেক্সট (পাশে পজিশন ও সাইড স্লাইড অ্যানিমেশন) */
+    .skip-indicator {
+      position: absolute;
+      top: 50%;
+      background: transparent;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 800;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9), 0 0 4px rgba(0, 0, 0, 0.7);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.18s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 15;
+      white-space: nowrap;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* রিভার্স বাটন (-10s) - বাঁ পাশে পজিশন এবং বাঁ দিকে স্লাইড অ্যানিমেশন */
+    .prev-btn .skip-indicator {
+      right: calc(100% + 4px);
+      left: auto;
+      transform: translateY(-50%) translateX(4px) scale(0.8);
+    }
+
+    .prev-btn .skip-indicator.show-skip {
+      opacity: 1;
+      transform: translateY(-50%) translateX(-6px) scale(1.15);
+    }
+
+    /* ফরোয়ার্ড বাটন (+10s) - ডান পাশে পজিশন এবং ডান দিকে স্লাইড অ্যানিমেশন */
+    .next-btn .skip-indicator {
+      left: calc(100% + 4px);
+      right: auto;
+      transform: translateY(-50%) translateX(-4px) scale(0.8);
+    }
+
+    .next-btn .skip-indicator.show-skip {
+      opacity: 1;
+      transform: translateY(-50%) translateX(6px) scale(1.15);
+    }
+
+    /* আইকন নড়াচড়ার স্মুথ অ্যানিমেশন */
+    @keyframes skipNudgeLeft {
+      0% { transform: scale(1) translateX(0); }
+      35% { transform: scale(0.85) translateX(-5px); }
+      70% { transform: scale(1.05) translateX(2px); }
+      100% { transform: scale(1) translateX(0); }
+    }
+
+    @keyframes skipNudgeRight {
+      0% { transform: scale(1) translateX(0); }
+      35% { transform: scale(0.85) translateX(5px); }
+      70% { transform: scale(1.05) translateX(-2px); }
+      100% { transform: scale(1) translateX(0); }
+    }
+
+    .nudge-left {
+      animation: skipNudgeLeft 0.35s ease-out;
+    }
+
+    .nudge-right {
+      animation: skipNudgeRight 0.35s ease-out;
     }
     
     .control-btn.prev-btn {
@@ -4811,6 +4878,7 @@
             <!-- প্লেব্যাক কন্ট্রোলস -->
             <div class="playback-controls">
               <button class="control-btn prev-btn" id="audioBtnPrev" aria-label="Previous">
+                <span class="skip-indicator" id="skipIndicatorPrev">-10s</span>
                 <div class="skip-wrapper">
                   <div class="skip-line"></div>
                   <img class="back-icon" src="https://raw.githubusercontent.com/yiasersk-design/SVG/main/play-503072-512px.webp" alt="Previous">
@@ -4823,6 +4891,7 @@
               </button>
               
               <button class="control-btn next-btn" id="audioBtnNext" aria-label="Next">
+                <span class="skip-indicator" id="skipIndicatorNext">+10s</span>
                 <div class="skip-wrapper">
                   <img class="next-icon" src="https://raw.githubusercontent.com/yiasersk-design/SVG/main/play-503072-512px.webp" alt="Next">
                   <div class="skip-line"></div>
@@ -4964,6 +5033,31 @@
           };
         }
 
+        // স্কিপ অ্যানিমেশন ট্রিগার হেল্পার
+        function triggerSkipFeedback(indicatorId, btnElem, animClass) {
+          const indicator = document.getElementById(indicatorId);
+          if (indicator) {
+            indicator.classList.remove('show-skip');
+            void indicator.offsetWidth;
+            indicator.classList.add('show-skip');
+            clearTimeout(indicator._hideTimer);
+            indicator._hideTimer = setTimeout(() => {
+              indicator.classList.remove('show-skip');
+            }, 550);
+          }
+
+          const iconWrapper = btnElem.querySelector('.skip-wrapper');
+          if (iconWrapper) {
+            iconWrapper.classList.remove(animClass);
+            void iconWrapper.offsetWidth;
+            iconWrapper.classList.add(animClass);
+            clearTimeout(iconWrapper._animTimer);
+            iconWrapper._animTimer = setTimeout(() => {
+              iconWrapper.classList.remove(animClass);
+            }, 350);
+          }
+        }
+
         // পূর্ববর্তী বাটন (১০ সেকেন্ড পিছিয়ে যাওয়া)
         if (prevBtn) {
           prevBtn.onclick = function(e) {
@@ -4971,7 +5065,10 @@
             if (!currentYTPlayer || typeof currentYTPlayer.getCurrentTime !== 'function') return;
             const cur = currentYTPlayer.getCurrentTime();
             const minTime = startTime || 0;
-            currentYTPlayer.seekTo(Math.max(minTime, cur - 10), true);
+            const targetTime = Math.max(minTime, cur - 10);
+            currentYTPlayer.seekTo(targetTime, true);
+            if (timeCur) timeCur.textContent = formatMediaTime(targetTime);
+            triggerSkipFeedback('skipIndicatorPrev', prevBtn, 'nudge-left');
           };
         }
 
@@ -4982,7 +5079,10 @@
             if (!currentYTPlayer || typeof currentYTPlayer.getCurrentTime !== 'function') return;
             const cur = currentYTPlayer.getCurrentTime();
             const maxDuration = (endTime > 0 ? endTime : currentYTPlayer.getDuration()) || (cur + 10);
-            currentYTPlayer.seekTo(Math.min(maxDuration, cur + 10), true);
+            const targetTime = Math.min(maxDuration, cur + 10);
+            currentYTPlayer.seekTo(targetTime, true);
+            if (timeCur) timeCur.textContent = formatMediaTime(targetTime);
+            triggerSkipFeedback('skipIndicatorNext', nextBtn, 'nudge-right');
           };
         }
 

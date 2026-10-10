@@ -1383,7 +1383,7 @@
     .play-pause-btn {
       width: 70px;
       height: 70px;
-      background-color: #ffffff;
+      background: none;
       border-radius: 50%;
       border: none;
       display: flex;
@@ -1392,7 +1392,7 @@
       cursor: pointer;
       box-shadow: none;
       flex-shrink: 0;
-      transition: transform 0.2s ease, background-color 0.3s ease;
+      transition: transform 0.2s ease;
       position: relative;
       z-index: 5;
     }
@@ -1403,10 +1403,11 @@
 
     .play-pause-btn svg,
     .play-pause-btn img {
-      width: 34px;
-      height: 34px;
-      fill: #1a1c0d;
+      width: 48px;
+      height: 48px;
+      fill: #ffffff;
       object-fit: contain;
+      filter: brightness(0) invert(1);
     }
 
             /* ফুলস্ক্রিন/প্লে অবস্থার স্মুথ অ্যানিমেশন - কোনো বাটন বা কন্ট্রোল অদৃশ্য হবে না */
